@@ -1,0 +1,25 @@
+.title {
+    font-size: 200%;
+    color: #333;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.link {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.link a {
+    text-decoration: none;
+    font-size: 300%;
+    font-weight: bold;
+    color: inherit;
+}
+
+
+body::-webkit-scrollbar {
+    display: none;
+}
