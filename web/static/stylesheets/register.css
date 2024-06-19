@@ -8,12 +8,16 @@
 }
 
 body{
-    background: linear-gradient(to right, white,#89ABE3);
+    background: linear-gradient(to left, white,#89ABE3);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     height: 100vh;
+}
+
+body.gradient-reversed {
+    background: linear-gradient(to right, white, #89ABE3);
 }
 
 .container{
