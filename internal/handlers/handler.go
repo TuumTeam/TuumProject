@@ -18,7 +18,7 @@ func RedirectToIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func RedirectTotuum(w http.ResponseWriter, r *http.Request) {
+func RedirectToTuum(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("web/templates/tuum.html"))
 	err := tmpl.Execute(w, nil)
 	if err != nil {
@@ -26,7 +26,7 @@ func RedirectTotuum(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func RedirectTologin(w http.ResponseWriter, r *http.Request) {
+func RegisterToLogin(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("web/templates/login.html"))
 	err := tmpl.Execute(w, nil)
 	if err != nil {
@@ -34,7 +34,7 @@ func RedirectTologin(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func RedirectToregister(w http.ResponseWriter, r *http.Request) {
+func RedirectToRegister(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("web/templates/register.html"))
 	err := tmpl.Execute(w, nil)
 	if err != nil {
@@ -42,7 +42,7 @@ func RedirectToregister(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func RedirectToprofile(w http.ResponseWriter, r *http.Request) {
+func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("web/templates/profile.html"))
 	err := tmpl.Execute(w, nil)
 	if err != nil {
