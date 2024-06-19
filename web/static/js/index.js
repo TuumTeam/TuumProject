@@ -56,7 +56,7 @@ document.getElementById("creationType").addEventListener("change", function () {
   const title = document.getElementById("title");
   if (selection === "newTuum") {
   // Fetch the search results from the server
-  
+
     research.style.display = "flex";
     description.style.gridRow = 4;
     title.style.gridRow = 3;
@@ -119,4 +119,6 @@ $(document).ready(function(){
           $("#searchBarProposition").empty();
       }
   });
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('JavaScript chargé!');
 });
