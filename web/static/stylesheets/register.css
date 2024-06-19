@@ -207,6 +207,6 @@ body{
     transform: translateX(200%);
 }
 
-#margin-bottom{
+.margin-bottom{
     margin-bottom: 20px;
 }
