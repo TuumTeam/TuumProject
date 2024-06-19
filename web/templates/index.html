@@ -1,10 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tuum</title>
+    <link rel="stylesheet" href="./css/index.css" />
+  </head>
+  <body>
+    <div class="windowWrapper">
+      <div class="containerGrid">
+        <header class="topBar">
+          <h1>Tuums</h1>
+          <div class="researchWrapper">
+            <input class="searchBar" type="search" />
+          </div>
+          <div class="createTuums">Add</div>
+          <div class="userProfile">Profile</div>
+        </header>
+        <div class="leftBar">
+          <div class="leftBarWrapper">
+            <div class="recentlyVisited">
+              <h3 class="recentrlyVisitedTitle">recently visited</h3>
+              <div class="recentlyVisitedContent">content here</div>
+            </div>
+            <div class="ownContent">
+              <h3 class="ownContentTitle">own content</h3>
+              <div class="ownContentContent">content here</div>
+            </div>
+          </div>
+        </div>
+        <div class="mainContent">
+          <div class="contentWrapper">
+            <div class="content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-</body>
+    <script src="../js/index.js"></script>
+  </body>
 </html>
