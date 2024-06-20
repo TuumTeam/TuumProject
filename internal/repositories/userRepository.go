@@ -2,56 +2,76 @@ package repositories
 
 import (
 	"database/sql"
-	"golang.org/x/crypto/bcrypt"
 	"tuum.com/internal/models"
 )
 
-// UserRepository définit les méthodes pour interagir avec la table des utilisateurs.
-type UserRepository struct {
-	DB *sql.DB
+type UserRepository interface {
+	CreateUser(user *models.User) error
+	GetUserByID(id int) (*models.User, error)
+	GetUserByUsername(username string) (*models.User, error)
+	GetAllUsers() ([]*models.User, error)
 }
 
-// NewUserRepository crée un nouveau UserRepository.
-func NewUserRepository(db *sql.DB) *UserRepository {
-	return &UserRepository{DB: db}
+type userRepository struct {
+	db *sql.DB
 }
 
-// Create insère un nouvel utilisateur dans la base de données.
-func (repo *UserRepository) Create(user *models.User) error {
-	hashedPassword, err := hashPassword(user.Password)
-	if err != nil {
-		return err
-	}
+func NewUserRepository(db *sql.DB) UserRepository {
+	return &userRepository{db: db}
+}
 
-	stmt, err := repo.DB.Prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)")
+func (r *userRepository) CreateUser(user *models.User) error {
+	query := `INSERT INTO users (username, email, password, created_at) VALUES (?, ?, ?, ?)`
+	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(user.Username, user.Email, hashedPassword)
+	_, err = stmt.Exec(user.Username, user.Email, user.Password, user.CreatedAt)
 	return err
 }
 
-// FindByEmail recherche un utilisateur par email.
-func (repo *UserRepository) FindByEmail(email string) (*models.User, error) {
-	user := &models.User{}
-	row := repo.DB.QueryRow("SELECT id, username, email, password FROM users WHERE email = ?", email)
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password)
+func (r *userRepository) GetUserByID(id int) (*models.User, error) {
+	query := `SELECT id, username, email, password, created_at FROM users WHERE id = ?`
+	row := r.db.QueryRow(query, id)
+
+	var user models.User
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
-	return user, nil
+	return &user, nil
 }
 
-// hashPassword génère un hash pour un mot de passe donné.
-func hashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return string(bytes), err
+func (r *userRepository) GetUserByUsername(username string) (*models.User, error) {
+	query := `SELECT id, username, email, password, created_at FROM users WHERE username = ?`
+	row := r.db.QueryRow(query, username)
+
+	var user models.User
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
-// CheckPasswordHash vérifie si un mot de passe correspond à un hash.
-func CheckPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
+func (r *userRepository) GetAllUsers() ([]*models.User, error) {
+	query := `SELECT id, username, email, password, created_at FROM users`
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*models.User
+	for rows.Next() {
+		var user models.User
+		err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, &user)
+	}
+	return users, nil
 }

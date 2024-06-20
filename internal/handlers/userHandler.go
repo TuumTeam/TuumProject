@@ -3,66 +3,64 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
+	"time"
 	"tuum.com/internal/models"
-	"tuum.com/internal/repositories"
+	"tuum.com/internal/services"
+
+	"github.com/gorilla/mux"
 )
 
-// UserHandler gère les requêtes liées aux utilisateurs.
 type UserHandler struct {
-	Repo *repositories.UserRepository
+	UserService services.UserService
 }
 
-// NewUserHandler crée un nouveau UserHandler.
-func NewUserHandler(repo *repositories.UserRepository) *UserHandler {
-	return &UserHandler{Repo: repo}
+func NewUserHandler(userService services.UserService) *UserHandler {
+	return &UserHandler{UserService: userService}
 }
 
-// Signup gère l'inscription des nouveaux utilisateurs.
-func (h *UserHandler) Signup(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
+func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = h.Repo.Create(&user)
-	if err != nil {
-		http.Error(w, "Failed to create user", http.StatusInternalServerError)
+	user.CreatedAt = time.Now()
+
+	if err := h.UserService.CreateUser(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
 }
 
-// Login gère la connexion des utilisateurs.
-func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var credentials struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-	err := json.NewDecoder(r.Body).Decode(&credentials)
+func (h *UserHandler) GetUserByID(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	id, err := strconv.Atoi(params["id"])
 	if err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "Invalid user ID", http.StatusBadRequest)
 		return
 	}
 
-	user, err := h.Repo.FindByEmail(credentials.Email)
-	if err != nil || !repositories.CheckPasswordHash(credentials.Password, user.Password) {
-		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+	user, err := h.UserService.GetUserByID(id)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
 
-	// Générer et renvoyer un token JWT (non implémenté ici)
-	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
+}
+
+func (h *UserHandler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := h.UserService.GetAllUsers()
+	if err != nil {
+		http.Error(w, "Unable to retrieve users", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(users)
 }

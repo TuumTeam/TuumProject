@@ -1,0 +1,27 @@
+# config.yaml
+
+server:
+  port: 8080             # The port the server will listen on
+  read_timeout: 10s      # Maximum duration for reading the entire request, including the body
+  write_timeout: 10s     # Maximum duration before timing out writes of the response
+  idle_timeout: 120s     # Maximum amount of time to wait for the next request when keep-alives are enabled
+
+database:
+  type: sqlite           # Type of the tuum_database (e.g., sqlite, postgres, mysql)
+  path: ./data/forum.db  # Path to the SQLite tuum_database file
+  max_open_conns: 25     # Maximum number of open connections to the tuum_database
+  max_idle_conns: 25     # Maximum number of connections in the idle connection pool
+  conn_max_lifetime: 5m  # Maximum amount of time a connection may be reused
+
+auth:
+  jwt_secret: "your_secret_key_here"  # Secret key for signing JWT tokens
+  token_expiry: 72h                   # Expiry duration for JWT tokens
+
+logging:
+  level: info            # Logging level (e.g., debug, info, warn, error)
+  format: json           # Log format (e.g., text, json)
+
+security:
+  csrf_protection: true  # Enable or disable CSRF protection
+  allowed_origins:       # List of allowed origins for CORS
+    - "http://localhost:8080"
