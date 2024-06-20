@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tuum</title>
-    <link rel="stylesheet" href="./css/index.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="static/stylesheets/index.css"
+    />
   </head>
   <body>
     <div class="windowWrapper">
@@ -15,6 +19,16 @@
             <input class="searchBar" type="search" />
           </div>
           <div class="createTuums">Add</div>
+
+          <div id="darkModeToggle">
+            <input type="checkbox" class="checkbox" id="checkbox" checked />
+            <label for="checkbox" class="checkbox-label">
+              <i class="fas fa-moon"></i>
+              <i class="fas fa-sun"></i>
+              <span class="ball"></span>
+            </label>
+          </div>
+
           <div class="userProfile">Profile</div>
         </header>
         <div class="leftBar">
@@ -37,6 +51,30 @@
       </div>
     </div>
 
-    <script src="../js/index.js"></script>
+    <script type="module" src="static/js/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/darkreader@latest/darkreader.min.js"></script>
+    <script>
+      // Function to toggle dark mode
+      function toggleDarkMode(isDark) {
+        if (isDark) {
+          DarkReader.enable({
+            brightness: 100,
+            contrast: 90,
+            sepia: 10,
+          });
+        } else {
+          DarkReader.disable();
+        }
+      }
+
+      // Event listener for dark mode toggle button
+      document
+        .getElementById("darkModeToggle")
+        .addEventListener("change", () => {
+          const isDark = !document.body.classList.toggle("dark-mode");
+          toggleDarkMode(isDark);
+          localStorage.setItem("darkMode", isDark);
+        });
+    </script>
   </body>
 </html>
