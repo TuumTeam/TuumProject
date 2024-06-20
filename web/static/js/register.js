@@ -9,3 +9,11 @@ registerBtn.addEventListener('click', () => {
 loginBtn.addEventListener('click', () => {
     container.classList.remove("active");
 });
+
+document.getElementById('register').addEventListener('click', function() {
+    document.body.classList.add('gradient-reversed');
+});
+
+document.getElementById('login').addEventListener('click', function() {
+    document.body.classList.remove('gradient-reversed');
+});
