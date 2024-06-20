@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tuum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <link
       rel="stylesheet"
       type="text/css"
@@ -14,11 +24,24 @@
     <div class="windowWrapper">
       <div class="containerGrid">
         <header class="topBar">
-          <h1>Tuums</h1>
-          <div class="researchWrapper">
-            <input class="searchBar" type="search" />
-          </div>
-          <div class="createTuums">Add</div>
+          <i
+            id="toggle-menu"
+            class="fa-solid fa-bars svg-dimentions left-menu"
+          ></i>
+          <h1 class="lato-black" id="TuumsPage">Tuums</h1>
+          <section>
+            <div class="researchWrapper">
+              <input
+                placeholder="Search Here"
+                class="searchBar"
+                type="search"
+              />
+            </div>
+            <div id="newTuum">
+              <!-- <span class="lato-regular">New Tuum</span> -->
+              <i class="fa-regular fa-square-plus svg"></i>
+            </div>
+          </section>
 
           <div id="darkModeToggle">
             <input type="checkbox" class="checkbox" id="checkbox" checked />
@@ -29,17 +52,27 @@
             </label>
           </div>
 
-          <div class="userProfile">Profile</div>
+          <div class="userProfile"></div>
         </header>
         <div class="leftBar">
           <div class="leftBarWrapper">
             <div class="recentlyVisited">
-              <h3 class="recentrlyVisitedTitle">recently visited</h3>
-              <div class="recentlyVisitedContent">content here</div>
+              <h3 class="recentrlyVisitedTitle lato-regular">
+                recently visited
+              </h3>
+              <div class="recentlyVisitedContent lato-light">
+                <ul>
+                  <li>Content Here</li>
+                </ul>
+              </div>
             </div>
             <div class="ownContent">
-              <h3 class="ownContentTitle">own content</h3>
-              <div class="ownContentContent">content here</div>
+              <h3 class="ownContentTitle lato-regular">own content</h3>
+              <div class="ownContentContent lato-light">
+                <ul>
+                  <li>Content Here</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -54,6 +87,7 @@
     <script type="module" src="static/js/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/darkreader@latest/darkreader.min.js"></script>
     <script>
+      window.onload = DarkReader.enable();
       // Function to toggle dark mode
       function toggleDarkMode(isDark) {
         if (isDark) {
@@ -74,6 +108,27 @@
           const isDark = !document.body.classList.toggle("dark-mode");
           toggleDarkMode(isDark);
           localStorage.setItem("darkMode", isDark);
+        });
+
+      document
+        .getElementById("toggle-menu")
+        .addEventListener("click", function () {
+          var menu = document.querySelector(".leftBar");
+
+          menu.classList.toggle("open");
+
+          // Adjust the grid-template-columns to accommodate the menu width
+          document.querySelector(".containerGrid").style.gridTemplateColumns =
+            menu.classList.contains("open") ? "250px 1fr" : "0 1fr";
+
+          var icon = document.getElementById("toggle-menu");
+          console.log("fliped");
+          icon.classList.add("flip-animation");
+
+          // Optional: Remove the animation class after it completes to allow re-triggering
+          icon.addEventListener("animationend", function () {
+            icon.classList.remove("flip-animation");
+          });
         });
     </script>
   </body>
