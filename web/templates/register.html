@@ -60,6 +60,46 @@
     </div>
 </div>
 
+<div id="darkModeToggle">
+    <input type="checkbox" class="checkbox" id="checkbox" checked />
+    <label for="checkbox" class="checkbox-label">
+        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
+        <span class="ball"></span>
+    </label>
+</div>
+
 <script src="../static/js/register.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/darkreader@latest/darkreader.min.js"></script>
+<script>
+    // Function to toggle dark mode
+    function toggleDarkMode(isDark) {
+        if (isDark) {
+            console.log("Dark mode enabled");
+            DarkReader.enable({
+                brightness: 100,
+                contrast: 90,
+                sepia: 10,
+            });
+        } else {
+            DarkReader.disable();
+        }
+    }
+
+    // Load user's preference for dark mode
+    const darkModePreference = localStorage.getItem("darkMode") === "true";
+    if (darkModePreference) {
+        toggleDarkMode(true);
+    }
+
+    // Event listener for dark mode toggle button
+    document
+        .getElementById("darkModeToggle")
+        .addEventListener("change", () => {
+            const isDark = !document.body.classList.toggle("dark-mode");
+            toggleDarkMode(isDark);
+            localStorage.setItem("darkMode", isDark);
+        });
+</script>
 </body>
 </html>
