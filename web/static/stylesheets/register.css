@@ -14,6 +14,7 @@ body{
     justify-content: center;
     flex-direction: column;
     height: 100vh;
+    transition: all 0.6s ease-in-out;
 }
 
 body.gradient-reversed {
@@ -79,7 +80,7 @@ body.gradient-reversed {
 }
 
 .container input{
-    background-color: #FCF6F5;
+    background-color: #f5f7fc;
     border: none;
     margin: 8px 0;
     padding: 10px 15px;
