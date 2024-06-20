@@ -17,8 +17,7 @@ func main() {
 	http.HandleFunc("/", handlers.RedirectToIndex)
 	http.HandleFunc("/home", handlers.RedirectToIndex)
 	http.HandleFunc("/tuum", handlers.RedirectToTuum)
-	//http.HandleFunc("/login", handlers.RegisterToLogin)
-	//http.HandleFunc("/register", handlers.RedirectToRegister)
+	http.HandleFunc("/register", handlers.RedirectToRegister)
 	http.HandleFunc("/profile", handlers.RedirectToProfile)
 	// Autres routes...
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
@@ -36,7 +35,7 @@ func main() {
 	userHandler := handlers.NewUserHandler(userRepo)
 
 	// Configuration des routes
-	http.HandleFunc("/register", userHandler.Signup)
+	//http.HandleFunc("/register", userHandler.Signup)
 	http.HandleFunc("/login", userHandler.Login)
 
 	// Middleware CSRF protection
