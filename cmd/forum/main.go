@@ -1,31 +1,51 @@
 package main
 
 import (
-	"fmt"
-	"github.com/gorilla/mux"
+	"database/sql"
+	"log"
 	"net/http"
+
+	"github.com/gorilla/csrf"
+	_ "github.com/mattn/go-sqlite3"
 	"tuum.com/internal/handlers"
-	"tuum.com/pkg/middleware"
+	"tuum.com/internal/repositories"
 )
 
 func main() {
-	r := mux.NewRouter()
+	// Routes
 
-	fs := http.FileServer(http.Dir("./web/static"))
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
+	http.HandleFunc("/", handlers.RedirectToIndex)
+	http.HandleFunc("/home", handlers.RedirectToIndex)
+	http.HandleFunc("/tuum", handlers.RedirectToTuum)
+	http.HandleFunc("/register", handlers.RedirectToRegister)
+	http.HandleFunc("/profile", handlers.RedirectToProfile)
+	http.HandleFunc("/settings", handlers.RedirectToSettings)
+	// Autres routes...
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
+	http.Handle("/web/protected/admin.html", handlers.IsAuthenticated(http.HandlerFunc(handlers.ProtectedFileHandler)))
 
-	r.HandleFunc("/", handlers.RedirectToIndex)
-	r.HandleFunc("/tuums", handlers.RedirectToTuums)
-	r.HandleFunc("/login", handlers.RedirectToLogin)
-
-	s := r.PathPrefix("/").Subrouter()
-	s.Use(middleware.AuthMiddleware)
-	s.HandleFunc("/profile", handlers.RedirectToProfile)
-	s.HandleFunc("/create", handlers.RedirectToCreate)
-
-	fmt.Println("Server starting at http://localhost:8080...")
-	err := http.ListenAndServe(":8080", r)
+	// Connexion à la base de données SQLite
+	db, err := sql.Open("sqlite3", "./forum.db")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	// Création des repositories et handlers
+	userRepo := repositories.NewUserRepository(db)
+	userHandler := handlers.NewUserHandler(userRepo)
+
+	// Configuration des routes
+	//http.HandleFunc("/register", userHandler.Signup)
+	http.HandleFunc("/login", userHandler.Login)
+
+	// Middleware CSRF protection
+	csrfMiddleware := csrf.Protect([]byte("32-byte-long-auth-key"))
+
+	// Démarrer le serveur
+	log.Println("Serveur démarré sur : http://localhost:8080")
+	err = http.ListenAndServe(":8080", csrfMiddleware(http.DefaultServeMux))
+	if err != nil {
+		log.Fatal("Erreur lors du démarrage du serveur : ", err)
 	}
 }

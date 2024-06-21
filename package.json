@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "darkreader": "^4.9.86"
+  },
+  "scripts": {
+    "start": "go run cmd/forum/main.go"
+  }
+}
