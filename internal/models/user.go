@@ -1,20 +1,14 @@
 package models
 
-type User struct {
-	ID       int    `json:"id"`
-	Username string `json:"username" validate:"required,min=3,max=32"`
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"-"`
-}
-
 import (
 	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
-	ID       int
-	Username string
-	Password string
+	ID       int    `json:"id"`
+	Username string `json:"username" validate:"required,min=3,max=32"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"-"`
 }
 
 func (u *User) HashPassword() error {
