@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+
 	"tuum.com/internal/models"
 	"tuum.com/internal/services"
 
 	_ "github.com/lib/pq"
+	"github.com/mattn/go-sqlite3"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -32,8 +34,8 @@ func createTable() {
 	query := `
  CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT NOT NULL,
-  email TEXT NOT NULL,
+  username TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL
  );`
 
@@ -58,6 +60,9 @@ func AddUser(user models.User) error {
 
 	res, err := stmt.Exec(user.Username, user.Email, user.Password)
 	if err != nil {
+		if sqliteErr, ok := err.(sqlite3.Error); ok && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
+			return fmt.Errorf("username or email already exists")
+		}
 		log.Printf("Error executing statement: %v", err)
 		return err
 	}
