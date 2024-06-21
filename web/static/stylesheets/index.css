@@ -11,6 +11,7 @@
 }
 
 * {
+  letter-spacing: 1px;
   margin: 0;
   padding: 0;
   border: none;
@@ -25,25 +26,50 @@ body {
   padding: 0;
 }
 
+/* ------------------- wrapper ------------------- */
+
 .windowWrapper {
   background-color: var(--white);
   height: 100vh;
 }
 
+.researchWrapper {
+  display: flex;
+  justify-content: center;
+  height: 26px;
+  width: 80%;
+}
+
+.leftBarWrapper {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 50% 50%;
+  padding: 5px;
+}
+
+/* ------------------- grid Layout ------------------- */
+
 .containerGrid {
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-columns: 150px 1fr;
-  grid-template-rows: 70px 1fr;
+  grid-template-columns: 0px 1fr;
+  transition: grid-template-columns 0.5s ease;
+  grid-template-rows: 80px 0px 1fr;
 }
 
+/* -------------------  Grid components ------------------- */
+
 .topBar {
+  padding-left: 180px;
+  padding-right: 180px;
+  position: relative;
   grid-column: 2 / 3;
-  grid-row: 1 / 2;
+  grid-row: 1;
   background-color: var(--light-blue);
   display: flex;
-  justify-content: space-between;
+
   align-items: center;
   flex-direction: row;
   filter: drop-shadow(0 0 0.75rem rgba(0, 0, 0, 0.2));
@@ -51,15 +77,26 @@ body {
 
 .leftBar {
   filter: drop-shadow(0 0 0.75rem rgba(0, 0, 0, 0.2));
-  grid-column: 1 / 2;
-  grid-row: 1 / 3;
+  grid-column: 1;
+  grid-row: 1 / 4;
   background-color: var(--egg-shell);
+  transition: width 0.5s ease;
+  width: 0;
+  overflow: hidden;
 }
 
 .mainContent {
-  grid-column: 2 / 3;
-  grid-row: 2 / 3;
+  grid-column: 2 / 2;
+  grid-row: 3 / 4;
   background-color: var(--white);
+}
+
+/* -------------------  Theme toggle ------------------- */
+
+#darkModeToggle {
+  position: absolute;
+  right: 90px;
+  top: 30px;
 }
 
 .checkbox {
@@ -80,6 +117,14 @@ body {
   align-items: center;
 }
 
+.fa-moon {
+  color: #f1c40f;
+}
+
+.fa-sun {
+  color: #f39c12;
+}
+
 .ball {
   background-color: var(--blue);
   width: 22px;
@@ -93,4 +138,203 @@ body {
 
 .checkbox:checked + .checkbox-label .ball {
   transform: translateX(24px);
+}
+
+/* -------------------  Header bar ------------------- */
+
+/* --- tuum page --- */
+#TuumsPage {
+  cursor: pointer;
+  position: absolute;
+  left: 90px;
+  top: 20px;
+}
+
+/* --- Search bar --- */
+.searchBar {
+  text-align: center;
+  color: black;
+  border-radius: 50px;
+  position: relative;
+  padding: 5px;
+  width: 80%;
+}
+
+section {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.searchBar:focus {
+  outline: none;
+}
+
+.searchBar:focus::placeholder {
+  color: transparent;
+}
+
+/*--- User profile --- */
+.userProfile {
+  position: absolute;
+  right: 15px;
+  top: 18px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  background-color: var(--white);
+  background-image: url("https://www.w3schools.com/howto/img_avatar.png");
+  background-size: cover;
+}
+.userProfile:hover {
+  cursor: pointer;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 1));
+}
+
+/* --- New Tuum --- */
+#newTuum {
+  position: absolute;
+  right: 150px;
+  top: 25px;
+  padding: 5px;
+}
+
+#newTuum span {
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.svg {
+  position: relative;
+  font-size: 24px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+/* --- hover info box new tuum --- */
+.svg:hover::after {
+  content: "Create a new Tuum";
+  position: absolute;
+  top: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: black;
+  /text-align: center;
+  padding: 5px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 1;
+  font-size: 12px;
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+/* -------------------  Left bar ------------------- */
+
+.leftBar.open {
+  width: 250px;
+}
+
+.left-menu {
+  cursor: pointer;
+  position: absolute;
+  left: 20px;
+  top: 30px;
+  font-size: 24px;
+}
+
+/* --- left bar content ---*/
+
+.recentlyVisited {
+  display: grid;
+  grid-template-rows: 50px 1fr;
+  border-bottom: solid 1px black;
+  padding-bottom: 5px;
+}
+
+.recentrlyVisitedTitle {
+  text-align: center;
+  grid-row: 1/2;
+}
+
+.recentlyVisitedList {
+  grid-row: 2/2;
+  overflow-y: auto;
+}
+
+.ownContent {
+  display: grid;
+  grid-template-rows: 50px 1fr;
+  padding-top: 5px;
+}
+
+.ownContentTitle {
+  text-align: center;
+  grid-row: 1/2;
+}
+
+.ownContentContent {
+  grid-row: 2/2;
+  overflow-y: auto;
+}
+
+/* -------------------  Fonts ------------------- */
+
+.lato-light {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.lato-regular {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.lato-bold {
+  font-family: "Lato", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.lato-black {
+  font-family: "Lato", sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.lato-light-italic {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+/* -------------------  Animations ------------------- */
+
+@keyframes flip {
+  from {
+    transform: rotateZ(0deg);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
+.flip-animation {
+  animation: flip 1s ease-in-out;
+}
+
+/* -------------------  Media queries ------------------- */
+
+@media screen and (max-width: 800px) {
+  .leftBar.open {
+    height: 180px;
+    grid-column: 2 /4;
+    grid-row: 2;
+    width: 100%;
+  }
 }
