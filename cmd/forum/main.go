@@ -22,6 +22,7 @@ func main() {
 	s.Use(middleware.AuthMiddleware)
 	s.HandleFunc("/profile", handlers.RedirectToProfile)
 	s.HandleFunc("/create", handlers.RedirectToCreate)
+	s.HandleFunc("/settings", handlers.RedirectToSettings)
 
 	fmt.Println("Server starting at http://localhost:8080...")
 	err := http.ListenAndServe(":8080", r)

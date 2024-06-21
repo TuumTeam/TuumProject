@@ -120,3 +120,7 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 func RedirectToCreate(w http.ResponseWriter, r *http.Request) {
 	ExecTmpl(w, "web/templates/create.html", nil)
 }
+
+func RedirectToSettings(w http.ResponseWriter, r *http.Request) {
+	ExecTmpl(w, "web/templates/settings.html", nil)
+}
