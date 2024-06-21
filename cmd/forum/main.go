@@ -25,7 +25,7 @@ func main() {
 
 	// Démarrer le serveur
 	log.Println("Serveur démarré sur : http://localhost:8080")
-	err := http.ListenAndServeTLS(":8080", `C:\\Users\\nicol\\OneDrive\\Documents\\certificate.crt`, `C:\\Users\\nicol\\OneDrive\\Documents\\private.key`, csrfMiddleware(r))
+	err := http.ListenAndServeTLS(":8080", "./key/certificate.crt", "./key/private.key", csrfMiddleware(r))
 	if err != nil {
 		log.Fatal("Erreur lors du démarrage du serveur : ", err)
 	}
