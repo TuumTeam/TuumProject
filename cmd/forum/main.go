@@ -19,6 +19,7 @@ func main() {
 	http.HandleFunc("/tuum", handlers.RedirectToTuum)
 	http.HandleFunc("/register", handlers.RedirectToRegister)
 	http.HandleFunc("/profile", handlers.RedirectToProfile)
+	http.HandleFunc("/settings", handlers.RedirectToSettings)
 	// Autres routes...
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
 	http.Handle("/web/protected/admin.html", handlers.IsAuthenticated(http.HandlerFunc(handlers.ProtectedFileHandler)))
