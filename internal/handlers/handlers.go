@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"html/template"
 	"net/http"
 	"time"
@@ -11,26 +10,33 @@ import (
 	"tuum.com/internal/models"
 )
 
-func ExecTmpl(w http.ResponseWriter, tmpl string, data interface{}) {
-	err := template.Must(template.ParseFiles(tmpl)).Execute(w, data)
+func ExecTmpl(w http.ResponseWriter, r *http.Request, tmpl string, data interface{}) {
+	t, err := template.ParseFiles(tmpl)
 	if err != nil {
-		fmt.Printf("Erreur d'execution du template\n")
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	err = t.Execute(w, data)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+
 	}
 }
 
 func RedirectToIndex(w http.ResponseWriter, r *http.Request) {
-	ExecTmpl(w, "web/templates/index.html", nil)
+	ExecTmpl(w, r, "web/templates/index.html", nil)
 }
 
 func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		ExecTmpl(w, "web/templates/register.html", nil)
+		ExecTmpl(w, r, "web/templates/register.html", nil)
 	} else {
 		if r.FormValue("LogType") == "Login" {
 			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("password"))
 			if logBool {
 				// Generate JWT
-				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
+				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"), "dark")
 				if err != nil {
 					http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 					return
@@ -61,7 +67,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// Generate JWT
-			token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
+			token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"), "dark")
 			if err != nil {
 				http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 				return
@@ -111,12 +117,12 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Execute the profile template with the user data
-	ExecTmpl(w, "web/templates/profile.html", user)
+	ExecTmpl(w, r, "web/templates/profile.html", user)
 }
 func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
-	ExecTmpl(w, "web/templates/tuums.html", nil)
+	ExecTmpl(w, r, "web/templates/tuums.html", nil)
 }
 
 func RedirectToCreate(w http.ResponseWriter, r *http.Request) {
-	ExecTmpl(w, "web/templates/create.html", nil)
+	ExecTmpl(w, r, "web/templates/create.html", nil)
 }
