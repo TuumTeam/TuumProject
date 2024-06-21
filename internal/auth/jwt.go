@@ -25,14 +25,16 @@ var jwtKey = []byte(generateSessionToken())
 type Claims struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
+	Theme    string `json:"theme"`
 	jwt.StandardClaims
 }
 
-func GenerateJWT(username, email string) (string, error) {
+func GenerateJWT(username, email, theme string) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
 		Username: username,
 		Email:    email,
+		Theme:    theme,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
