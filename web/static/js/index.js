@@ -32,5 +32,3 @@ document.getElementById("toggle-menu").addEventListener("click", function () {
 });
 
 window.addEventListener("resize", adjustMenuForScreenWidth);
-
-console.log("Hello from index.js");
