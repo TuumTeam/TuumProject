@@ -11,6 +11,7 @@
 }
 
 * {
+  letter-spacing: 1px;
   margin: 0;
   padding: 0;
   border: none;
@@ -25,10 +26,29 @@ body {
   padding: 0;
 }
 
+/* ------------------- wrapper ------------------- */
+
 .windowWrapper {
   background-color: var(--white);
   height: 100vh;
 }
+
+.researchWrapper {
+  display: flex;
+  justify-content: center;
+  height: 26px;
+  width: 80%;
+}
+
+.leftBarWrapper {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 50% 50%;
+  padding: 5px;
+}
+
+/* ------------------- grid Layout ------------------- */
 
 .containerGrid {
   height: 100%;
@@ -36,15 +56,17 @@ body {
   display: grid;
   grid-template-columns: 0px 1fr;
   transition: grid-template-columns 0.5s ease;
-  grid-template-rows: 80px 1fr;
+  grid-template-rows: 80px 0px 1fr;
 }
+
+/* -------------------  Grid components ------------------- */
 
 .topBar {
   padding-left: 180px;
   padding-right: 180px;
   position: relative;
   grid-column: 2 / 3;
-  grid-row: 1 / 2;
+  grid-row: 1;
   background-color: var(--light-blue);
   display: flex;
 
@@ -55,22 +77,26 @@ body {
 
 .leftBar {
   filter: drop-shadow(0 0 0.75rem rgba(0, 0, 0, 0.2));
-  grid-column: 1 / 2;
-  grid-row: 1 / 3;
+  grid-column: 1;
+  grid-row: 1 / 4;
   background-color: var(--egg-shell);
   transition: width 0.5s ease;
   width: 0;
   overflow: hidden;
 }
 
-.leftBar.open {
-  width: 250px;
+.mainContent {
+  grid-column: 2 / 2;
+  grid-row: 3 / 4;
+  background-color: var(--white);
 }
 
-.mainContent {
-  grid-column: 2 / 3;
-  grid-row: 2 / 3;
-  background-color: var(--white);
+/* -------------------  Theme toggle ------------------- */
+
+#darkModeToggle {
+  position: absolute;
+  right: 90px;
+  top: 30px;
 }
 
 .checkbox {
@@ -114,19 +140,23 @@ body {
   transform: translateX(24px);
 }
 
+/* -------------------  Header bar ------------------- */
+
+/* --- tuum page --- */
+#TuumsPage {
+  cursor: pointer;
+  position: absolute;
+  left: 90px;
+  top: 20px;
+}
+
+/* --- Search bar --- */
 .searchBar {
   text-align: center;
-  color: var(--egg-shell);
+  color: black;
   border-radius: 50px;
   position: relative;
   padding: 5px;
-  width: 80%;
-}
-
-.researchWrapper {
-  display: flex;
-  justify-content: center;
-  height: 26px;
   width: 80%;
 }
 
@@ -146,14 +176,7 @@ section {
   color: transparent;
 }
 
-.left-menu {
-  cursor: pointer;
-  position: absolute;
-  left: 20px;
-  top: 30px;
-  font-size: 24px;
-}
-
+/*--- User profile --- */
 .userProfile {
   position: absolute;
   right: 15px;
@@ -170,19 +193,7 @@ section {
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 1));
 }
 
-#darkModeToggle {
-  position: absolute;
-  right: 90px;
-  top: 30px;
-}
-
-#TuumsPage {
-  cursor: pointer;
-  position: absolute;
-  left: 90px;
-  top: 20px;
-}
-
+/* --- New Tuum --- */
 #newTuum {
   position: absolute;
   right: 150px;
@@ -195,53 +206,25 @@ section {
   margin-right: 10px;
 }
 
-.lato-light {
-  font-family: "Lato", sans-serif;
-  font-weight: 300;
-  font-style: normal;
-}
-
-.lato-regular {
-  font-family: "Lato", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.lato-bold {
-  font-family: "Lato", sans-serif;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.lato-black {
-  font-family: "Lato", sans-serif;
-  font-weight: 900;
-  font-style: normal;
-}
-
-.lato-light-italic {
-  font-family: "Lato", sans-serif;
-  font-weight: 300;
-  font-style: italic;
-}
-
 .svg {
   position: relative;
   font-size: 24px;
   margin-right: 5px;
   cursor: pointer;
 }
+
+/* --- hover info box new tuum --- */
 .svg:hover::after {
-  content: "Create a new Tuum"; /* No change here */
+  content: "Create a new Tuum";
   position: absolute;
-  top: 110%; /* Position the info box below the icon */
+  top: 110%;
   left: 50%;
   transform: translateX(-50%);
-  color: black; /* No change here */
-  text-align: center;
+  color: black;
+  /text-align: center;
   padding: 5px 10px;
   border-radius: 6px;
-  white-space: nowrap; /* No change here */
+  white-space: nowrap;
   z-index: 1;
   font-size: 12px;
   font-family: "Lato", sans-serif;
@@ -249,13 +232,21 @@ section {
   font-style: normal;
 }
 
-.leftBarWrapper {
-  height: 100%;
-  width: 100%;
-  display: grid;
-  grid-template-rows: 50% 50%;
-  padding: 5px;
+/* -------------------  Left bar ------------------- */
+
+.leftBar.open {
+  width: 250px;
 }
+
+.left-menu {
+  cursor: pointer;
+  position: absolute;
+  left: 20px;
+  top: 30px;
+  font-size: 24px;
+}
+
+/* --- left bar content ---*/
 
 .recentlyVisited {
   display: grid;
@@ -290,6 +281,40 @@ section {
   overflow-y: auto;
 }
 
+/* -------------------  Fonts ------------------- */
+
+.lato-light {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.lato-regular {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.lato-bold {
+  font-family: "Lato", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.lato-black {
+  font-family: "Lato", sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.lato-light-italic {
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+/* -------------------  Animations ------------------- */
+
 @keyframes flip {
   from {
     transform: rotateZ(0deg);
@@ -301,4 +326,15 @@ section {
 
 .flip-animation {
   animation: flip 1s ease-in-out;
+}
+
+/* -------------------  Media queries ------------------- */
+
+@media screen and (max-width: 800px) {
+  .leftBar.open {
+    height: 180px;
+    grid-column: 2 /4;
+    grid-row: 2;
+    width: 100%;
+  }
 }
