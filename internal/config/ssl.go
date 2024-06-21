@@ -9,7 +9,7 @@ func SetupTLSConfig() *tls.Config {
 	m := &autocert.Manager{
 		Prompt:     autocert.AcceptTOS,
 		Cache:      autocert.DirCache("certs"),
-		HostPolicy: autocert.HostWhitelist("yourdomain.com"),
+		HostPolicy: autocert.HostWhitelist("localhost:8080"),
 	}
 
 	return &tls.Config{
