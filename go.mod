@@ -11,4 +11,8 @@ require (
 	golang.org/x/crypto v0.24.0
 )
 
-require github.com/gorilla/securecookie v1.1.2 // indirect
+require (
+	cloud.google.com/go/compute/metadata v0.3.0 // indirect
+	github.com/gorilla/securecookie v1.1.2 // indirect
+	golang.org/x/oauth2 v0.21.0 // indirect
+)
