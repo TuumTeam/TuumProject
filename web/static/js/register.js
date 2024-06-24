@@ -17,3 +17,4 @@ document.getElementById('register').addEventListener('click', function() {
 document.getElementById('login').addEventListener('click', function() {
     document.body.classList.remove('gradient-reversed');
 });
+

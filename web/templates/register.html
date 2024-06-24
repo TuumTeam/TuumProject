@@ -3,11 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title>Sign up</title>
-        <link
-                rel="stylesheet"
-                href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-        />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
         <link rel="stylesheet" href="static/stylesheets/register.css">
+        <link rel="icon" href="/static/img/logo.png" type="image/png" />
     </head>
     <body>
         <header id="toogleDarkmodeDiv">
@@ -20,6 +18,13 @@
                 </label>
             </div>
         </header>
+            <div id="logoDiv">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="static/img/logo.png"/>
+                    </a>
+                </div>
+            </div>
         <div class="container" id="container">
             <div class="form-container sign-up">
                 <form action="tuum.html" method="post">
@@ -53,6 +58,7 @@
                     <input type="email" name="email" id="signin-email" placeholder="Email">
                     <label for="password">Password:</label>
                     <input type="password" name="password" id="signin-password" placeholder="Password">
+                    <span id="wrong-password">Wrong password</span>
                     <button>Sign In</button>
                 </form>
             </div>
