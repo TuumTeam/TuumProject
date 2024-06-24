@@ -12,13 +12,13 @@ type PostRepository struct {
 }
 
 // NewUPostRepository crée un nouveau PostRepository.
-func NewPostRepository(db *sql.DB) *UserRepository {
-	return &UserRepository{DB: db}
+func NewPostRepository(db *sql.DB) *PostRepository {
+	return &PostRepository{DB: db}
 }
 
-func (repo *UserRepository) CreatePost(post *models.Post) error {
+func (repo *PostRepository) CreatePost(post *models.Post) error {
 
-	stmt, err := repo.DB.Prepare("INSERT INTO users (Title, Content, user, Comments) VALUES (?, ?, ?, ?)")
+	stmt, err := repo.DB.Prepare("INSERT INTO post (Title, Content, user, Comments) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}

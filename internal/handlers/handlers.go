@@ -127,19 +127,28 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Login failed", http.StatusUnauthorized)
 			}
 		} else {
-			post := models.Post{
-				Title:    r.FormValue("title"),
-				Content:  r.FormValue("content"),
-				User:     models.User{},
-				Comments: []models.Comment{},
+			if r.FormValue("LogType") == "Login" {
+				logBool, _ := database.Login(r.FormValue("email"), r.FormValue("password"))
+				if logBool {
+					http.Redirect(w, r, "/", http.StatusSeeOther)
+				} else {
+					http.Error(w, "Login failed", http.StatusUnauthorized)
+				}
+			} else {
+				post := models.Post{
+					Title:    r.FormValue("username"),
+					Content:  r.FormValue("password"),
+					Hashtag:  r.FormValue("hashtag"),
+					User:     models.User{},
+					Comments: []models.Comment{},
+				}
+				err := database.AddPost(post)
+				if err != nil {
+					http.Error(w, "Unable to add user to database", http.StatusInternalServerError)
+					return
+				}
+				http.Redirect(w, r, "/tumms", http.StatusSeeOther)
 			}
-			//err := database.AddUser(post)
-			if err != nil {
-				http.Error(w, "Unable to add user to database", http.StatusInternalServerError)
-				return
-			}
-
-			http.Redirect(w, r, "/tuum", http.StatusSeeOther)
 		}
 	}
 }

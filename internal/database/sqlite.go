@@ -27,10 +27,10 @@ func init() {
 		log.Fatal(err)
 	}
 
-	createTable()
+	createTableUser()
 }
 
-func createTable() {
+func createTableUser() {
 	query := `
  CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,4 +93,55 @@ func Login(email, password string) (bool, error) {
 	}
 
 	return services.CheckPasswordHash(password, user.Password), nil
+}
+
+func initPost() {
+	var err error
+	db, err = sql.Open("sqlite3", "./database/post.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = db.Ping()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	createTablePost()
+}
+
+func createTablePost() {
+	query := `
+ CREATE TABLE IF NOT EXISTS post (
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  hashtag TEXT,
+  user TEXT NOT NULL,
+  comments TEXT NOT NULL
+ );`
+
+	_, err := db.Exec(query)
+	if err != nil {
+		log.Fatalf("Error creating post table: %v", err)
+	}
+}
+
+func AddPost(post models.Post) error {
+	sqlStatement := `
+ INSERT INTO post (title, content, hashtag, user, comments)
+ VALUES (?, ?, ?, ?, ?)`
+	stmt, err := db.Prepare(sqlStatement)
+	if err != nil {
+		log.Printf("Error preparing statement: %v", err)
+		return err
+	}
+	defer stmt.Close()
+
+	res, err := stmt.Exec(post.Title, post.Content, post.Hashtag, post.User, post.Comments)
+	if err != nil {
+		log.Printf("Error executing statement: %v", err)
+		return err
+	}
+	fmt.Println(res)
+	return nil
 }

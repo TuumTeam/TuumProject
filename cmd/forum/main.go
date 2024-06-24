@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 	"tuum.com/internal/handlers"
 	"tuum.com/pkg/middleware"
 )
 
 func main() {
-	r := mux.NewRouter()
+	r := mux.NewRouter() // Use NewRouter from the imported package
 
 	fs := http.FileServer(http.Dir("./web/static"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
