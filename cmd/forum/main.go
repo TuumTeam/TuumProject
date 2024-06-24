@@ -5,7 +5,9 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"tuum.com/internal/config" // Corrected import path
 	"tuum.com/internal/handlers"
+	"tuum.com/pkg/middleware"
 )
 
 func main() {
@@ -17,15 +19,25 @@ func main() {
 
 	// Routes
 	r.HandleFunc("/", handlers.RedirectToIndex)
-	r.HandleFunc("/home", handlers.RedirectToIndex)
-	r.Handle("/web/protected/admin.html", handlers.IsAuthenticated(http.HandlerFunc(handlers.ProtectedFileHandler)))
+
+	s := r.PathPrefix("/").Subrouter()
+	s.Use(middleware.AuthMiddleware)
+	s.HandleFunc("/profile", handlers.RedirectToProfile)
 
 	// Middleware CSRF protection
 	csrfMiddleware := csrf.Protect([]byte("32-byte-long-auth-key"))
 
+	tlsConfig := config.SetupTLSConfig() // Corrected function call
+	// Create a custom server with the TLS configuration
+	server := &http.Server{
+		Addr:      ":443",
+		Handler:   csrfMiddleware(r),
+		TLSConfig: tlsConfig,
+	}
+
 	// Démarrer le serveur
-	log.Println("Serveur démarré sur : http://localhost:8080")
-	err := http.ListenAndServeTLS(":8080", "./key/certificate.crt", "./key/private.key", csrfMiddleware(r))
+	log.Println("Serveur démarré sur : https://localhost:443")
+	err := server.ListenAndServeTLS("", "")
 	if err != nil {
 		log.Fatal("Erreur lors du démarrage du serveur : ", err)
 	}
