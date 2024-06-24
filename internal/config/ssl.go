@@ -1,18 +1,15 @@
 package config
 
-import (
-	"crypto/tls"
-	"golang.org/x/crypto/acme/autocert"
-)
-
+/*
+// SetupTLSConfig configure TLS with a self-signed certificate for localhost
 func SetupTLSConfig() *tls.Config {
-	m := &autocert.Manager{
-		Prompt:     autocert.AcceptTOS,
-		Cache:      autocert.DirCache("certs"),
-		HostPolicy: autocert.HostWhitelist("localhost:8080"),
+	cert, err := tls.LoadX509KeyPair("localhost.crt", "localhost.key")
+	if err != nil {
+		log.Fatalf("failed to load key pair: %s", err)
 	}
 
 	return &tls.Config{
-		GetCertificate: m.GetCertificate,
+		Certificates: []tls.Certificate{cert},
 	}
 }
+*/
