@@ -1,29 +1,30 @@
 package middleware
 
 import (
-	"github.com/google/uuid"
+	"context"
+	"errors"
 	"net/http"
+	"tuum.com/internal/handlers"
 )
-
-func CreateSession(w http.ResponseWriter, r *http.Request) {
-	sessionID := uuid.New().String()
-	cookie := &http.Cookie{
-		Name:     "session_id",
-		Value:    sessionID,
-		HttpOnly: true,
-	}
-	http.SetCookie(w, cookie)
-	// Stockez le sessionID et l'état de la session sur le serveur
-}
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie("session_id")
-		if err != nil || cookie.Value == "" {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		cookie, err := r.Cookie("session_token")
+		if err != nil {
+			if errors.Is(err, http.ErrNoCookie) {
+				handlers.RedirectToIndex(w, r)
+				return
+			}
+			http.Error(w, "Server error", http.StatusInternalServerError)
 			return
 		}
-		// Vérifiez la session côté serveur
+
+		tokenString := cookie.Value
+
+		// Attach user information to request context
+		// This assumes that the token string is the username
+		r = r.WithContext(context.WithValue(r.Context(), "username", tokenString))
+
 		next.ServeHTTP(w, r)
 	})
 }
