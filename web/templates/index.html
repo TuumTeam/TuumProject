@@ -1,13 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/stylesheets/stylesheet.css">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Tuum</h1>
-    <script src="static/js/index.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tuum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="static/stylesheets/index.css"
+    />
+  </head>
+  <body>
+    <div class="windowWrapper">
+      <div class="containerGrid">
+        <header class="topBar">
+          <i
+            id="toggle-menu"
+            class="fa-solid fa-bars svg-dimentions left-menu"
+          ></i>
+          <h1 class="lato-black" id="TuumsPage">Tuums</h1>
+          <section>
+            <div class="researchWrapper">
+              <input
+                placeholder="Search Here"
+                class="searchBar"
+                type="search"
+              />
+            </div>
+            <div id="newTuum">
+              <!-- <span class="lato-regular">New Tuum</span> -->
+              <i class="fa-regular fa-square-plus svg"></i>
+            </div>
+          </section>
+
+          <div id="darkModeToggle">
+            <input type="checkbox" class="checkbox" id="checkbox" checked />
+            <label for="checkbox" class="checkbox-label">
+              <i class="fas fa-moon"></i>
+              <i class="fas fa-sun"></i>
+              <span class="ball"></span>
+            </label>
+          </div>
+
+          <div class="userProfile"></div>
+        </header>
+        <div class="leftBar">
+          <div class="leftBarWrapper">
+            <div class="recentlyVisited">
+              <h3 class="recentrlyVisitedTitle lato-regular">
+                recently visited
+              </h3>
+              <div class="recentlyVisitedContent lato-light">
+                <ul>
+                  <li>Content Here</li>
+                </ul>
+              </div>
+            </div>
+            <div class="ownContent">
+              <h3 class="ownContentTitle lato-regular">own content</h3>
+              <div class="ownContentContent lato-light">
+                <ul>
+                  <li>Content Here</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mainContent">
+          <div class="contentWrapper">
+            <div class="content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/static/js/index.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/darkreader@latest/darkreader.min.js"></script>
+    <script>
+      window.onload = DarkReader.enable();
+      // Function to toggle dark mode
+      function toggleDarkMode(isDark) {
+        if (isDark) {
+          DarkReader.enable({
+            brightness: 100,
+            contrast: 90,
+            sepia: 10,
+          });
+        } else {
+          DarkReader.disable();
+        }
+      }
+
+      // Event listener for dark mode toggle button
+      document
+        .getElementById("darkModeToggle")
+        .addEventListener("change", () => {
+          const isDark = !document.body.classList.toggle("dark-mode");
+          toggleDarkMode(isDark);
+          localStorage.setItem("darkMode", isDark);
+        });
+    </script>
+  </body>
 </html>
