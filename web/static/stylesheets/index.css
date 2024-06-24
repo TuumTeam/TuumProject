@@ -63,7 +63,7 @@ body {
   position: relative;
   grid-column: 2 / 3;
   grid-row: 1;
-  background-color: var(--light-blue);
+  background: linear-gradient(145deg, var(--light-blue), var(--blue));
   display: flex;
 
   align-items: center;
@@ -397,20 +397,14 @@ section {
 }
 
 #leaveTuumBtn {
-  display: none;
-  position: fixed;
-  top: 0px;
-  left: 30px;
-  margin: 20px;
-  z-index: 1000;
-  background-color: var(--egg-shell);
-  border-radius: 8px;
-  border: none;
+  background-color: transparent;
+  display: block;
+  position: absolute;
   color: black;
   font-size: 20px;
+  top: 23px;
+  right: 27px;
   cursor: pointer;
-  width: 100px;
-  height: 40px;
 }
 
 /* -------------------  Left bar ------------------- */

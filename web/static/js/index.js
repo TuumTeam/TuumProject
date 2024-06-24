@@ -43,8 +43,7 @@ const windowWrapper = document.getElementById("windowWrapper");
 const leaveTuumBtn = document.getElementById("leaveTuumBtn");
 
 newTuum.addEventListener("click", () => {
-  leaveTuumBtn.style.display = "block";
-  windowWrapper.classList.add("blur"); // Add blur to windowWrapper
+  windowWrapper.classList.add("blur");
 
   // Show the popup
   popup.style.display = "block";
@@ -56,7 +55,6 @@ document.getElementById("leaveTuumBtn").addEventListener("click", function () {
   document.querySelector(".popup-title").value = "";
   document.querySelector(".popup-description").value = "";
   windowWrapper.classList.remove("blur");
-  leaveTuumBtn.style.display = "none";
 });
 
 // Add event listener to close the popup
