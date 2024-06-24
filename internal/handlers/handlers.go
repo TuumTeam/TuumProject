@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"time"
+
 	"tuum.com/internal/auth"
 	"tuum.com/internal/database"
 	"tuum.com/internal/models"
@@ -113,8 +114,34 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 	// Execute the profile template with the user data
 	ExecTmpl(w, "web/templates/profile.html", user)
 }
+
 func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
-	ExecTmpl(w, "web/templates/tuums.html", nil)
+	if r.Method == http.MethodGet {
+		ExecTmpl(w, "web/templates/Tuum.html", nil)
+	} else {
+		if r.FormValue("LogType") == "Login" {
+			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("password"))
+			if logBool {
+				http.Redirect(w, r, "/", http.StatusSeeOther)
+			} else {
+				http.Error(w, "Login failed", http.StatusUnauthorized)
+			}
+		} else {
+			post := models.Post{
+				Title:    r.FormValue("title"),
+				Content:  r.FormValue("content"),
+				User:     models.User{},
+				Comments: []models.Comment{},
+			}
+			//err := database.AddUser(post)
+			if err != nil {
+				http.Error(w, "Unable to add user to database", http.StatusInternalServerError)
+				return
+			}
+
+			http.Redirect(w, r, "/tuum", http.StatusSeeOther)
+		}
+	}
 }
 
 func RedirectToCreate(w http.ResponseWriter, r *http.Request) {

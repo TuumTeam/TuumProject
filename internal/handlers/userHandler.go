@@ -3,8 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+
 	"tuum.com/internal/models"
 	"tuum.com/internal/repositories"
+	"tuum.com/internal/services"
 )
 
 // UserHandler gère les requêtes liées aux utilisateurs.
@@ -31,7 +33,7 @@ func (h *UserHandler) Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.Repo.Create(&user)
+	err = h.Repo.CreateUser(&user)
 	if err != nil {
 		http.Error(w, "Failed to create user", http.StatusInternalServerError)
 		return
@@ -58,7 +60,7 @@ func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, err := h.Repo.FindByEmail(credentials.Email)
-	if err != nil || !repositories.CheckPasswordHash(credentials.Password, user.Password) {
+	if err != nil || !services.CheckPasswordHash(credentials.Password, user.Password) {
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 		return
 	}
