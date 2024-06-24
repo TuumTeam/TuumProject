@@ -1,5 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
+:root {
+    --blue: #78a5eccc;
+    --light-blue: #89abe3;
+    --egg-shell: #f5f7fc;
+    --white: #ffffff;
+    --breakpoint-xs: 0;
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+}
+
 *{
     margin: 0;
     padding: 0;
@@ -14,6 +26,11 @@ body{
     justify-content: center;
     flex-direction: column;
     height: 100vh;
+    transition: all 0.6s ease-in-out;
+}
+
+body.gradient-reversed {
+    background: linear-gradient(to right, white, #89ABE3);
 }
 
 .container{
