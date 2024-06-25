@@ -28,7 +28,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 		ExecTmpl(w, "web/templates/register.html", nil)
 	} else {
 		if r.FormValue("LogType") == "Login" {
-			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("password"))
+			logBool := database.Login(r.FormValue("email"), r.FormValue("password"))
 			if logBool {
 				// Generate JWT
 				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
@@ -49,18 +49,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Login failed", http.StatusUnauthorized)
 			}
 		} else {
-			user := models.User{
-				ID:       0,
-				Username: r.FormValue("username"),
-				Email:    r.FormValue("email"),
-				Password: r.FormValue("password"),
-			}
-			err := database.AddUser(user)
-			if err != nil {
-				http.Error(w, "Unable to add user to database", http.StatusInternalServerError)
-				return
-			}
-
+			database.CreateUser(r.FormValue("username"), r.FormValue("email"), r.FormValue("password"))
 			// Generate JWT
 			token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
 			if err != nil {
@@ -104,7 +93,7 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get user details from the database
-	user, err := database.GetUserByEmail(claims.Email)
+	user := database.GetUserByEmail(claims.Email)
 	if err != nil {
 		// If there is an error in getting the user, return an internal server error
 		w.WriteHeader(http.StatusInternalServerError)
@@ -120,7 +109,7 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 		ExecTmpl(w, "web/templates/Tuum.html", nil)
 	} else {
 		if r.FormValue("LogType") == "Login" {
-			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("password"))
+			logBool := database.Login(r.FormValue("email"), r.FormValue("password"))
 			if logBool {
 				http.Redirect(w, r, "/", http.StatusSeeOther)
 			} else {
@@ -128,7 +117,7 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			if r.FormValue("LogType") == "Login" {
-				logBool, _ := database.Login(r.FormValue("email"), r.FormValue("password"))
+				logBool := database.Login(r.FormValue("email"), r.FormValue("password"))
 				if logBool {
 					http.Redirect(w, r, "/", http.StatusSeeOther)
 				} else {
@@ -136,11 +125,11 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 				}
 			} else {
 				post := models.Post{
-					Title:    r.FormValue("username"),
-					Content:  r.FormValue("password"),
-					Hashtag:  r.FormValue("hashtag"),
-					User:     models.User{},
-					Comments: []models.Comment{},
+					UserID:    1,
+					RoomID:    1,
+					Title:     r.FormValue("title"),
+					Content:   r.FormValue("content"),
+					CreatedAt: time.Now(),
 				}
 				err := database.AddPost(post)
 				if err != nil {
