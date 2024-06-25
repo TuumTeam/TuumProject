@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Sign up</title>
-    <link rel="stylesheet" href="../static/stylesheets/register.css">
-    <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
+    <link rel="stylesheet" href="/static/stylesheets/register.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 </head>
 <body>
 <header id="toogleDarkmodeDiv">
@@ -22,7 +19,7 @@
 </header>
 <div class="container" id="container">
     <div class="form-container sign-up">
-        <form method="post">
+        <form method="post" id="registerForm">
             <h1>Create Account</h1>
             <div class="social-icons">
                 <a href="#" class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"/></svg></a>
@@ -35,13 +32,13 @@
             <input type="email" name="email" id="email" placeholder="Email">
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" placeholder="Password">
-            <input type="hidden" name="LogType" value="Register">
-            <button>Sign Up</button>
+            <input type="hidden" name="LogType" value="Register" id="logType">
+            <button onclick="hashSubmit(0)">Sign Up</button>
         </form>
 
     </div>
     <div class="form-container sign-in">
-        <form method="post">
+        <form method="post" id="loginForm">
             <h1>Sign In</h1>
             <div class="social-icons">
                 <a href="#" class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"/></svg></a>
@@ -53,7 +50,7 @@
             <label for="password">Password:</label>
             <input type="password" name="password" id="signin-password" placeholder="Password">
             <input type="hidden" name="LogType" value="Login">
-            <button>Sign In</button>
+            <button onclick="hashSubmit(1)">Sign In</button>
         </form>
     </div>
 
