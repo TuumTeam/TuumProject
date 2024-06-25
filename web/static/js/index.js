@@ -14,6 +14,8 @@ function adjustMenuForScreenWidth() {
   }
 }
 
+/* -------------------  Left menu ------------------- */
+
 // Toggle menu click event listener
 document.getElementById("toggle-menu").addEventListener("click", function () {
   var menu = document.querySelector(".leftBar");
@@ -32,3 +34,30 @@ document.getElementById("toggle-menu").addEventListener("click", function () {
 });
 
 window.addEventListener("resize", adjustMenuForScreenWidth);
+
+/* -------------------  Popup ------------------- */
+const newTuum = document.getElementById("newTuum");
+const popup = document.getElementById("popup");
+const closePopup = document.getElementsByClassName("popup-close-btn")[0];
+const windowWrapper = document.getElementById("windowWrapper");
+const leaveTuumBtn = document.getElementById("leaveTuumBtn");
+
+newTuum.addEventListener("click", () => {
+  windowWrapper.classList.add("blur");
+
+  // Show the popup
+  popup.style.display = "block";
+});
+
+document.getElementById("leaveTuumBtn").addEventListener("click", function () {
+  document.getElementById("popup").style.display = "none";
+  // Optionally, clear the form fields if needed
+  document.querySelector(".popup-title").value = "";
+  document.querySelector(".popup-description").value = "";
+  windowWrapper.classList.remove("blur");
+});
+
+// Add event listener to close the popup
+// closePopup.addEventListener("click", () => {
+//   windowWrapper.classList.remove("blur"); // Remove blur from windowWrapper
+// });

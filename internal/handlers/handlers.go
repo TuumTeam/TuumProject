@@ -50,7 +50,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			database.CreateUser(r.FormValue("username"), r.FormValue("email"), r.FormValue("password"))
-			// Generate JWT
+			fmt.Printf(r.FormValue("password"))
 			token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
 			if err != nil {
 				http.Error(w, "Failed to generate token", http.StatusInternalServerError)

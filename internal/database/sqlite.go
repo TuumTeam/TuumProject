@@ -3,80 +3,20 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"tuum.com/internal/models"
-	"tuum.com/internal/services"
 )
 
-var db *sql.DB
-
 func init() {
-	var err error
-	db, err = sql.Open("sqlite3", "./database/users.db")
+	db, err := sql.Open("sqlite3", "./database/forum.db")
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		return
 	}
+	defer db.Close()
 
-	err = db.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	createTable()
 	createTables(db)
 }
 
-func createTable() {
-	query := `
- CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT NOT NULL,
-  email TEXT NOT NULL,
-  password TEXT NOT NULL
- );`
-
-	_, err := db.Exec(query)
-	if err != nil {
-		log.Fatalf("Error creating users table: %v", err)
-	}
-}
-
-func AddUser(user models.User) error {
-	user.Password, _ = services.HashPassword(user.Password)
-
-	sqlStatement := `
- INSERT INTO users (username, email, password)
- VALUES (?, ?, ?)`
-	stmt, err := db.Prepare(sqlStatement)
-	if err != nil {
-		log.Printf("Error preparing statement: %v", err)
-		return err
-	}
-	defer stmt.Close()
-
-	res, err := stmt.Exec(user.Username, user.Email, user.Password)
-	if err != nil {
-		log.Printf("Error executing statement: %v", err)
-		return err
-	}
-
-	id, err := res.LastInsertId()
-	if err != nil {
-		log.Printf("Error getting last insert ID: %v", err)
-		return err
-	}
-	fmt.Println("New record ID is:", id)
-	return nil
-}
-
-func Login(email, password string) (bool, error) {
-	user, _ := GetUserByEmail(email)
-	if user == nil {
-		return false, fmt.Errorf("user not found")
-	}
-
-	return services.CheckPasswordHash(password, user.Password), nil
-}
 func createTables(db *sql.DB) {
 	userTable := `
     CREATE TABLE IF NOT EXISTS users (
@@ -143,4 +83,20 @@ func createTables(db *sql.DB) {
 	}
 
 	fmt.Println("Tables created successfully")
+}
+
+func Login(email string, password string) bool {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	query := `SELECT * FROM users WHERE email = ?`
+	row := db.QueryRow(query, email)
+	user := models.User{}
+	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
+	if err != nil {
+		return false
+	}
+	if password == user.Password {
+		return true
+	} else {
+		return false
+	}
 }
