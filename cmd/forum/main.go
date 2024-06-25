@@ -10,17 +10,16 @@ import (
 )
 
 func main() {
-	r := mux.NewRouter() // Use NewRouter from the imported package
+	r := mux.NewRouter()
 
 	fs := http.FileServer(http.Dir("./web/static"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
-
-	r.HandleFunc("/", handlers.RedirectToIndex)
-	r.HandleFunc("/tuums", handlers.RedirectToTuums)
 	r.HandleFunc("/login", handlers.RedirectToLogin)
-
 	s := r.PathPrefix("/").Subrouter()
 	s.Use(middleware.AuthMiddleware)
+
+	s.HandleFunc("/", handlers.RedirectToIndex)
+	s.HandleFunc("/tuums", handlers.RedirectToTuums)
 	s.HandleFunc("/profile", handlers.RedirectToProfile)
 	s.HandleFunc("/create", handlers.RedirectToCreate)
 
