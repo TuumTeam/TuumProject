@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 	"tuum.com/internal/handlers"
 	"tuum.com/pkg/middleware"
 )
