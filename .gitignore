@@ -1,5 +1,4 @@
 .idea
 .vscode
 node_modules
-database/users.db
-database/posts.db
+database
