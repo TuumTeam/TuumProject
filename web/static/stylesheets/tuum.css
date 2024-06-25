@@ -1,0 +1,14 @@
+p {
+    color: red;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+    font-weight: bold;
+}
+
+body ::-webkit-scrollbar {
+    display: none;
+}

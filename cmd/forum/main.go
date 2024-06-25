@@ -4,8 +4,11 @@ import (
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 	"log"
+	"fmt"
 	"net/http"
 	"tuum.com/internal/config"
+
+	"github.com/gorilla/mux"
 	"tuum.com/internal/handlers"
 	"tuum.com/pkg/middleware"
 )

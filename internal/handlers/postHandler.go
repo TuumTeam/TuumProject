@@ -1,15 +1,13 @@
 package handlers
 
 import (
-	"net/http"
+	"tuum.com/internal/repositories"
 )
 
-func PostHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		// Gestion des erreurs ici
-		http.Error(w, "Not implemented", http.StatusNotImplemented)
-	default:
-		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-	}
+type PostHandler struct {
+	Repo *repositories.PostRepository
+}
+
+func NewPostHandler(repo *repositories.PostRepository) *PostHandler {
+	return &PostHandler{Repo: repo}
 }

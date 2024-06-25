@@ -2,11 +2,10 @@ package models
 
 import "time"
 
-type Post struct {
+type Comment struct {
 	ID        int
+	PostID    int
 	UserID    int
-	RoomID    int
-	Title     string
 	Content   string
 	CreatedAt time.Time
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"tuum.com/internal/handlers"
+	"tuum.com/internal/auth"
 )
 
 func AuthMiddleware(next http.Handler) http.Handler {
@@ -12,7 +12,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		cookie, err := r.Cookie("session_token")
 		if err != nil {
 			if errors.Is(err, http.ErrNoCookie) {
-				handlers.RedirectToIndex(w, r)
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
 				return
 			}
 			http.Error(w, "Server error", http.StatusInternalServerError)
@@ -21,9 +21,15 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		tokenString := cookie.Value
 
+		// Validate JWT
+		claims, err := auth.ValidateJWT(tokenString)
+		if err != nil {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
 		// Attach user information to request context
-		// This assumes that the token string is the username
-		r = r.WithContext(context.WithValue(r.Context(), "username", tokenString))
+		r = r.WithContext(context.WithValue(r.Context(), "username", claims.Username))
 
 		next.ServeHTTP(w, r)
 	})

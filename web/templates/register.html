@@ -4,9 +4,22 @@
     <meta charset="UTF-8">
     <title>Sign up</title>
     <link rel="stylesheet" href="../static/stylesheets/register.css">
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
 </head>
 <body>
-
+<header id="toogleDarkmodeDiv">
+    <div id="darkModeToggle">
+        <input type="checkbox" class="checkbox" id="checkbox" checked />
+        <label for="checkbox" class="checkbox-label">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+            <span class="ball"></span>
+        </label>
+    </div>
+</header>
 <div class="container" id="container">
     <div class="form-container sign-up">
         <form method="post">
@@ -59,7 +72,38 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/darkreader@latest/darkreader.min.js"></script>
+<script>
+    window.onload = DarkReader.enable();
+    // Function to toggle dark mode
+    function toggleDarkMode(isDark) {
+        if (isDark) {
+            console.log("Dark mode enabled");
+            DarkReader.enable({
+                brightness: 100,
+                contrast: 90,
+                sepia: 10,
+            });
+        } else {
+            DarkReader.disable();
+        }
+    }
 
+    // Load user's preference for dark mode
+    const darkModePreference = localStorage.getItem("darkMode") === "true";
+    if (darkModePreference) {
+        toggleDarkMode(true);
+    }
+
+    // Event listener for dark mode toggle button
+    document
+        .getElementById("darkModeToggle")
+        .addEventListener("change", () => {
+            const isDark = !document.body.classList.toggle("dark-mode");
+            toggleDarkMode(isDark);
+            localStorage.setItem("darkMode", isDark);
+        });
+</script>
 <script src="../static/js/register.js"></script>
 </body>
 </html>
