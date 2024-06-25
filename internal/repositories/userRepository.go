@@ -2,8 +2,9 @@ package repositories
 
 import (
 	"database/sql"
-	"golang.org/x/crypto/bcrypt"
+
 	"tuum.com/internal/models"
+	"tuum.com/internal/services"
 )
 
 // UserRepository définit les méthodes pour interagir avec la table des utilisateurs.
@@ -17,8 +18,8 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 }
 
 // Create insère un nouvel utilisateur dans la base de données.
-func (repo *UserRepository) Create(user *models.User) error {
-	hashedPassword, err := hashPassword(user.Password)
+func (repo *UserRepository) CreateUser(user *models.User) error {
+	hashedPassword, err := services.HashPassword(user.Password)
 	if err != nil {
 		return err
 	}
@@ -42,16 +43,4 @@ func (repo *UserRepository) FindByEmail(email string) (*models.User, error) {
 		return nil, err
 	}
 	return user, nil
-}
-
-// hashPassword génère un hash pour un mot de passe donné.
-func hashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return string(bytes), err
-}
-
-// CheckPasswordHash vérifie si un mot de passe correspond à un hash.
-func CheckPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
 }
