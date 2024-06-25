@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"tuum.com/internal/models"
-	"tuum.com/internal/services"
 )
 
 func init() {
@@ -87,7 +86,7 @@ func createTables(db *sql.DB) {
 }
 
 func Login(email string, password string) bool {
-	db, _ := sql.Open("sqlite3", "./forum.db")
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
 	query := `SELECT * FROM users WHERE email = ?`
 	row := db.QueryRow(query, email)
 	user := models.User{}
@@ -95,7 +94,7 @@ func Login(email string, password string) bool {
 	if err != nil {
 		return false
 	}
-	if services.CheckPasswordHash(password, user.Password) {
+	if password == user.Password {
 		return true
 	} else {
 		return false
