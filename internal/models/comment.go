@@ -1,6 +1,11 @@
 package models
 
+import "time"
+
 type Comment struct {
-	Content string `json:"content" validate:"required"`
-	User    User   `json:"user" validate:"required"`
+	ID        int
+	PostID    int
+	UserID    int
+	Content   string
+	CreatedAt time.Time
 }
