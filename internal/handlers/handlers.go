@@ -9,7 +9,6 @@ import (
 
 	"tuum.com/internal/auth"
 	"tuum.com/internal/database"
-	"tuum.com/internal/models"
 )
 
 func ExecTmpl(w http.ResponseWriter, tmpl string, data interface{}) {
@@ -31,7 +30,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 			logBool := database.Login(r.FormValue("email"), r.FormValue("password"))
 			if logBool {
 				// Generate JWT
-				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
+				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"), "dark")
 				if err != nil {
 					http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 					return
@@ -51,7 +50,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 		} else {
 			database.CreateUser(r.FormValue("username"), r.FormValue("email"), r.FormValue("password"))
 			fmt.Printf(r.FormValue("password"))
-			token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
+			token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"), "dark")
 			if err != nil {
 				http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 				return
@@ -106,39 +105,12 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 
 func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		ExecTmpl(w, "web/templates/Tuum.html", nil)
+		ExecTmpl(w,  "web/templates/tuum.html", nil)
+	} else if r.Method == http.MethodPost {
+		database.CreatePost(1, 1, r.FormValue("title"), r.FormValue("description"))
+		http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 	} else {
-		if r.FormValue("LogType") == "Login" {
-			logBool := database.Login(r.FormValue("email"), r.FormValue("password"))
-			if logBool {
-				http.Redirect(w, r, "/", http.StatusSeeOther)
-			} else {
-				http.Error(w, "Login failed", http.StatusUnauthorized)
-			}
-		} else {
-			if r.FormValue("LogType") == "Login" {
-				logBool := database.Login(r.FormValue("email"), r.FormValue("password"))
-				if logBool {
-					http.Redirect(w, r, "/", http.StatusSeeOther)
-				} else {
-					http.Error(w, "Login failed", http.StatusUnauthorized)
-				}
-			} else {
-				post := models.Post{
-					UserID:    1,
-					RoomID:    1,
-					Title:     r.FormValue("title"),
-					Content:   r.FormValue("content"),
-					CreatedAt: time.Now(),
-				}
-				err := database.AddPost(post)
-				if err != nil {
-					http.Error(w, "Unable to add user to database", http.StatusInternalServerError)
-					return
-				}
-				http.Redirect(w, r, "/tumms", http.StatusSeeOther)
-			}
-		}
+		ExecTmpl(w, "web/templates/tuum.html", nil)
 	}
 }
 
