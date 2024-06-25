@@ -24,17 +24,6 @@ func (repo *PostRepository) CreatePost(post *models.Post) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(post.Title, post.Content, post.User, post.Comments)
+	_, err = stmt.Exec(post.ID, post.UserID, post.RoomID, post.Title, post.Content, post.CreatedAt)
 	return err
 }
-
-// FindByTitle recherche un post par Title.
-/*func (repo *PostRepository) FindByTitle(title string) (*models.Post, error) {
-	post := &models.Post{}
-	row := repo.DB.QueryRow("SELECT id, username, email, password FROM users WHERE email = ?", title)
-	err := row.Scan(&post.Title, &post.Content, &post.User, &post.Comments)
-	if err != nil {
-		return nil, err
-	}
-	return post, nil
-}*/
