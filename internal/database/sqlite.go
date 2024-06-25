@@ -23,6 +23,7 @@ func init() {
 	}
 
 	createTable()
+	createTables(db)
 }
 
 func createTable() {
@@ -68,43 +69,14 @@ func AddUser(user models.User) error {
 	return nil
 }
 
-func GetUserByEmail(email string) (*models.User, error) {
-	user := &models.User{}
-	row := db.QueryRow("SELECT id, username, email, password FROM users WHERE email = ?", email)
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
-}
-
 func Login(email, password string) (bool, error) {
-	user, err := GetUserByEmail(email)
-	if err != nil {
-		return false, err
+	user, _ := GetUserByEmail(email)
+	if user == nil {
+		return false, fmt.Errorf("user not found")
 	}
 
 	return services.CheckPasswordHash(password, user.Password), nil
 }
-
-import (
-	"database/sql"
-	"fmt"
-	"tuum.com/internal/models"
-	"tuum.com/internal/services"
-)
-
-func init() {
-	db, err := sql.Open("sqlite3", "./database/forum.db")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer db.Close()
-
-	createTables(db)
-}
-
 func createTables(db *sql.DB) {
 	userTable := `
     CREATE TABLE IF NOT EXISTS users (
@@ -171,20 +143,4 @@ func createTables(db *sql.DB) {
 	}
 
 	fmt.Println("Tables created successfully")
-}
-
-func Login(email string, password string) bool {
-	db, _ := sql.Open("sqlite3", "./forum.db")
-	query := `SELECT * FROM users WHERE email = ?`
-	row := db.QueryRow(query, email)
-	user := models.User{}
-	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
-	if err != nil {
-		return false
-	}
-	if services.CheckPasswordHash(password, user.Password) {
-		return true
-	} else {
-		return false
-	}
 }
