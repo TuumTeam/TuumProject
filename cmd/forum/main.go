@@ -23,6 +23,12 @@ func main() {
 	// Autres routes...
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
 	http.Handle("/web/protected/admin.html", handlers.IsAuthenticated(http.HandlerFunc(handlers.ProtectedFileHandler)))
+	http.HandleFunc("/auth/google/login", handlers.OAuthLogin)
+	http.HandleFunc("/auth/github/login", handlers.OAuthLogin)
+	http.HandleFunc("/auth/facebook/login", handlers.OAuthLogin)
+	http.HandleFunc("/auth/google/callback", handlers.OAuthCallback)
+	http.HandleFunc("/auth/github/callback", handlers.OAuthCallback)
+	http.HandleFunc("/auth/facebook/callback", handlers.OAuthCallback)
 
 	// Connexion à la base de données SQLite
 	db, err := sql.Open("sqlite3", "./forum.db")
