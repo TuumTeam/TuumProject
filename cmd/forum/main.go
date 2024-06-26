@@ -28,7 +28,7 @@ func main() {
 	s.Use(middleware.RateLimiter) // Add the rate limiter middleware
 	s.HandleFunc("/profile", handlers.RedirectToProfile)
 
-	dbPath := "./database/users.db"
+	dbPath := "./database/forum.db"
 
 	// Check if the database file exists
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
