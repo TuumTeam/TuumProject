@@ -35,8 +35,7 @@ async function hash(string) {
 }
 
 async function hashSubmit(logType) {
-    let password = document.getElementsByName("password")[logType].value;
-    document.getElementsByName("password")[logType].value = await hash(password);
+    document.getElementsByName("hash")[logType].value = await hash(document.getElementsByName("password")[logType].value);
     switch (logType) {
         case 0:
             document.getElementById("registerForm").submit();

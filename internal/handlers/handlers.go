@@ -28,9 +28,8 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 		ExecTmpl(w, "web/templates/register.html", nil)
 	} else {
 		if r.FormValue("LogType") == "Login" {
-			logBool := database.Login(r.FormValue("email"), r.FormValue("password"))
+			logBool := database.Login(r.FormValue("email"), r.FormValue("hash"))
 			if logBool {
-				// Generate JWT
 				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
 				if err != nil {
 					http.Error(w, "Failed to generate token", http.StatusInternalServerError)
@@ -49,8 +48,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Login failed", http.StatusUnauthorized)
 			}
 		} else {
-			database.CreateUser(r.FormValue("username"), r.FormValue("email"), r.FormValue("password"))
-			fmt.Printf(r.FormValue("password"))
+			database.CreateUser(r.FormValue("username"), r.FormValue("email"), r.FormValue("hash"))
 			token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
 			if err != nil {
 				http.Error(w, "Failed to generate token", http.StatusInternalServerError)
