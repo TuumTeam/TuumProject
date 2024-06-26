@@ -15,10 +15,10 @@ func main() {
 	fs := http.FileServer(http.Dir("./web/static"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 	r.HandleFunc("/login", handlers.RedirectToLogin)
+	r.HandleFunc("/", handlers.RedirectToIndex)
 	s := r.PathPrefix("/").Subrouter()
 	s.Use(middleware.AuthMiddleware)
 
-	s.HandleFunc("/", handlers.RedirectToIndex)
 	s.HandleFunc("/tuums", handlers.RedirectToTuums)
 	s.HandleFunc("/profile", handlers.RedirectToProfile)
 	s.HandleFunc("/create", handlers.RedirectToCreate)

@@ -32,6 +32,7 @@
             <input type="email" name="email" id="email" placeholder="Email">
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" placeholder="Password">
+            <input type="hidden" name="hash">
             <input type="hidden" name="LogType" value="Register" id="logType">
             <button onclick="hashSubmit(0)">Sign Up</button>
         </form>
@@ -49,6 +50,7 @@
             <input type="email" name="email" id="signin-email" placeholder="email@example.com">
             <label for="password">Password:</label>
             <input type="password" name="password" id="signin-password" placeholder="Password">
+            <input type="hidden" name="hash">
             <input type="hidden" name="LogType" value="Login">
             <button onclick="hashSubmit(1)">Sign In</button>
         </form>
