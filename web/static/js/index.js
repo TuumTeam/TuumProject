@@ -59,22 +59,6 @@ document.getElementById("creationType").addEventListener("change", function () {
 
     description.style.gridRow = 4;
     title.style.gridRow = 3;
-
-    // // Create and insert hashtag area
-    // const hashtagArea = document.createElement("input");
-    // hashtagArea.setAttribute("type", "text");
-    // hashtagArea.setAttribute("placeholder", "Enter hashtags");
-    // hashtagArea.id = "hashtagArea";
-    // hashtagArea.className = "popup-inputs";
-    // document.getElementById("popup").appendChild(hashtagArea);
-    // // Create and insert research bar
-    // const researchBar = document.createElement("input");
-    // researchBar.setAttribute("type", "search");
-    // researchBar.setAttribute("placeholder", "Search for a salon");
-    // researchBar.id = "researchBar";
-    // researchBar.className = "popup-inputs";
-    // document.getElementById("popup").appendChild(researchBar);
-    // console.log("newTuum");
   } else if (selection === "newRoom") {
     research.style.display = "none";
     console.log("newSalon");
@@ -88,8 +72,3 @@ document.getElementById("leaveTuumBtn").addEventListener("click", function () {
   document.querySelector(".popup-description").value = "";
   windowWrapper.classList.remove("blur");
 });
-
-// Add event listener to close the popup
-// closePopup.addEventListener("click", () => {
-//   windowWrapper.classList.remove("blur"); // Remove blur from windowWrapper
-// });
