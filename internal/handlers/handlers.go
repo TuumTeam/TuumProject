@@ -43,7 +43,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 					Expires:  time.Now().Add(24 * time.Hour),
 					HttpOnly: true,
 				})
-				http.Redirect(w, r, "/", http.StatusSeeOther)
+				http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 			} else {
 				http.Error(w, "Login failed", http.StatusUnauthorized)
 			}
@@ -63,7 +63,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 				HttpOnly: true,
 			})
 
-			http.Redirect(w, r, "/profile", http.StatusSeeOther)
+			http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 		}
 	}
 }
