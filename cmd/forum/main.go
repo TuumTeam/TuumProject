@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 	"tuum.com/internal/handlers"
 	"tuum.com/pkg/middleware"
 )
@@ -13,15 +14,20 @@ func main() {
 
 	fs := http.FileServer(http.Dir("./web/static"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
-
-	r.HandleFunc("/", handlers.RedirectToIndex)
-	r.HandleFunc("/tuums", handlers.RedirectToTuums)
 	r.HandleFunc("/login", handlers.RedirectToLogin)
-
+	r.HandleFunc("/", handlers.RedirectToIndex)
 	s := r.PathPrefix("/").Subrouter()
 	s.Use(middleware.AuthMiddleware)
+
+	s.HandleFunc("/tuums", handlers.RedirectToTuums)
 	s.HandleFunc("/profile", handlers.RedirectToProfile)
 	s.HandleFunc("/create", handlers.RedirectToCreate)
+	r.HandleFunc("/auth/google/login", handlers.OAuthLogin)
+	r.HandleFunc("/auth/github/login", handlers.OAuthLogin)
+	r.HandleFunc("/auth/facebook/login", handlers.OAuthLogin)
+	r.HandleFunc("/auth/google/callback", handlers.OAuthCallback)
+	r.HandleFunc("/auth/github/callback", handlers.OAuthCallback)
+	r.HandleFunc("/auth/facebook/callback", handlers.OAuthCallback)
 
 	fmt.Println("Server starting at http://localhost:8080...")
 	err := http.ListenAndServe(":8080", r)

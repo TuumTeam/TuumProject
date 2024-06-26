@@ -2,41 +2,35 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"html/template"
 	"net/http"
 	"time"
+
 	"tuum.com/internal/auth"
 	"tuum.com/internal/database"
 	"tuum.com/internal/models"
 )
 
-func ExecTmpl(w http.ResponseWriter, r *http.Request, tmpl string, data interface{}) {
-	t, err := template.ParseFiles(tmpl)
+func ExecTmpl(w http.ResponseWriter, tmpl string, data interface{}) {
+	err := template.Must(template.ParseFiles(tmpl)).Execute(w, data)
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-	err = t.Execute(w, data)
-	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-
+		fmt.Printf("Erreur d'execution du template\n")
 	}
 }
 
 func RedirectToIndex(w http.ResponseWriter, r *http.Request) {
-	ExecTmpl(w, r, "web/templates/index.html", nil)
+	ExecTmpl(w, "web/templates/index.html", nil)
 }
 
 func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		ExecTmpl(w, r, "web/templates/register.html", nil)
+		ExecTmpl(w, "web/templates/register.html", nil)
 	} else {
 		if r.FormValue("LogType") == "Login" {
-			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("password"))
+			logBool := database.Login(r.FormValue("email"), r.FormValue("hash"))
 			if logBool {
-				// Generate JWT
-				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"), "dark")
+				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
 				if err != nil {
 					http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 					return
@@ -49,25 +43,13 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 					Expires:  time.Now().Add(24 * time.Hour),
 					HttpOnly: true,
 				})
-				http.Redirect(w, r, "/", http.StatusSeeOther)
+				http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 			} else {
 				http.Error(w, "Login failed", http.StatusUnauthorized)
 			}
 		} else {
-			user := models.User{
-				ID:       0,
-				Username: r.FormValue("username"),
-				Email:    r.FormValue("email"),
-				Password: r.FormValue("password"),
-			}
-			err := database.AddUser(user)
-			if err != nil {
-				http.Error(w, "Unable to add user to database", http.StatusInternalServerError)
-				return
-			}
-
-			// Generate JWT
-			token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"), "dark")
+			database.CreateUser(r.FormValue("username"), r.FormValue("email"), r.FormValue("hash"))
+			token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
 			if err != nil {
 				http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 				return
@@ -81,7 +63,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 				HttpOnly: true,
 			})
 
-			http.Redirect(w, r, "/profile", http.StatusSeeOther)
+			http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 		}
 	}
 }
@@ -109,7 +91,7 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get user details from the database
-	user, err := database.GetUserByEmail(claims.Email)
+	user := database.GetUserByEmail(claims.Email)
 	if err != nil {
 		// If there is an error in getting the user, return an internal server error
 		w.WriteHeader(http.StatusInternalServerError)
@@ -117,12 +99,47 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Execute the profile template with the user data
-	ExecTmpl(w, r, "web/templates/profile.html", user)
+	ExecTmpl(w, "web/templates/profile.html", user)
 }
+
 func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
-	ExecTmpl(w, r, "web/templates/tuums.html", nil)
+	if r.Method == http.MethodGet {
+		ExecTmpl(w, "web/templates/Tuum.html", nil)
+	} else {
+		if r.FormValue("LogType") == "Login" {
+			logBool := database.Login(r.FormValue("email"), r.FormValue("password"))
+			if logBool {
+				http.Redirect(w, r, "/", http.StatusSeeOther)
+			} else {
+				http.Error(w, "Login failed", http.StatusUnauthorized)
+			}
+		} else {
+			if r.FormValue("LogType") == "Login" {
+				logBool := database.Login(r.FormValue("email"), r.FormValue("password"))
+				if logBool {
+					http.Redirect(w, r, "/", http.StatusSeeOther)
+				} else {
+					http.Error(w, "Login failed", http.StatusUnauthorized)
+				}
+			} else {
+				post := models.Post{
+					UserID:    1,
+					RoomID:    1,
+					Title:     r.FormValue("title"),
+					Content:   r.FormValue("content"),
+					CreatedAt: time.Now(),
+				}
+				err := database.AddPost(post)
+				if err != nil {
+					http.Error(w, "Unable to add user to database", http.StatusInternalServerError)
+					return
+				}
+				http.Redirect(w, r, "/tumms", http.StatusSeeOther)
+			}
+		}
+	}
 }
 
 func RedirectToCreate(w http.ResponseWriter, r *http.Request) {
-	ExecTmpl(w, r, "web/templates/create.html", nil)
+	ExecTmpl(w, "web/templates/create.html", nil)
 }
