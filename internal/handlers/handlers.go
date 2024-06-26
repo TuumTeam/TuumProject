@@ -28,8 +28,8 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 		ExecTmpl(w, "web/templates/register.html", nil)
 	} else {
 		if r.FormValue("LogType") == "Login" {
-			logBool, err := database.Login(r.FormValue("email"), r.FormValue("password"))
-			if logBool && err == nil {
+			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("password"))
+			if logBool {
 				// Generate JWT
 				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
 				if err != nil {
@@ -109,16 +109,16 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 		ExecTmpl(w, "web/templates/Tuum.html", nil)
 	} else {
 		if r.FormValue("LogType") == "Login" {
-			logBool, err := database.Login(r.FormValue("email"), r.FormValue("password"))
-			if logBool && err == nil {
+			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("password"))
+			if logBool {
 				http.Redirect(w, r, "/", http.StatusSeeOther)
 			} else {
 				http.Error(w, "Login failed", http.StatusUnauthorized)
 			}
 		} else {
 			if r.FormValue("LogType") == "Login" {
-				logBool, err := database.Login(r.FormValue("email"), r.FormValue("password"))
-				if logBool && err == nil {
+				logBool, _ := database.Login(r.FormValue("email"), r.FormValue("password"))
+				if logBool {
 					http.Redirect(w, r, "/", http.StatusSeeOther)
 				} else {
 					http.Error(w, "Login failed", http.StatusUnauthorized)
