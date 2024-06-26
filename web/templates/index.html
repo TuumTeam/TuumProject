@@ -60,7 +60,7 @@
             </div>
             <div class="menu-item">
               <i class="fa-solid fa-gear userMenuSvg"></i>
-              <a href="#">Settings</a>
+              <a href="settings">Settings</a>
             </div>
             <div class="menu-item">
               <i class="fa-solid fa-arrow-right-from-bracket userMenuSvg"></i>
@@ -102,8 +102,31 @@
     <div id="popup" class="popup-container" style="display: none">
       <form action="/" method="post">
         <div class="popup-content">
-          <h1 class="TuumPopupTitle lato-black">Create new Tuum</h1>
-          <div class="titleTumm-wrapper">
+          <!-- wrapper1 -->
+          <div class="formTypeSelectorWrapper">
+            <select
+              name="creationSelector"
+              class="lato-black"
+              id="creationType"
+            >
+              <option class="lato-regular" value="newTuum">
+                Create New Tuum
+              </option>
+              <option class="lato-regular" value="newRoom">
+                Create New Room
+              </option>
+            </select>
+          </div>
+          <!-- wrapper2 -->
+          <div id="researchBar" class="formSearchBarWrapper">
+            <input
+              type="search"
+              id="formSearchBar"
+              placeholder="Search Rooms here"
+            />
+          </div>
+          <!-- wrapper3 -->
+          <div id="title" class="titleTumm-wrapper">
             <div>
               <label class="lato-bold form-Labels" for="title">Title</label>
               <textarea
@@ -114,7 +137,8 @@
               ></textarea>
             </div>
           </div>
-          <div class="description-wrapper">
+          <!-- wrapper4 -->
+          <div id="description" class="description-wrapper">
             <div>
               <label class="lato-bold" for="description">Description</label>
               <textarea
@@ -125,6 +149,7 @@
               ></textarea>
             </div>
           </div>
+          <!-- wrapper5 -->
           <div class="btn-wrapper">
             <input class="popup-close-btn" type="submit" value="Submit" />
           </div>

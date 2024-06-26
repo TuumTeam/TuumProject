@@ -303,7 +303,7 @@ section {
   height: 100%;
   width: 100%;
   display: grid;
-  grid-template-rows: 1fr 25% 50% 1fr;
+  grid-template-rows: 15% 10% 25% 40% 1fr;
 }
 
 #popup form {
@@ -322,8 +322,22 @@ section {
   display: none;
 }
 
+.formTypeSelectorWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-row: 1;
+}
+
 .titleTumm-wrapper {
   flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-row: 3;
+}
+
+.formSearchBarWrapper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -334,14 +348,21 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
-  grid-row: 3;
+  grid-row: 4;
+}
+
+.hashtagsWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-row: 5;
 }
 
 .btn-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  grid-row: 4;
+  grid-row: 6;
 }
 
 .popup-close-btn {
@@ -405,6 +426,33 @@ section {
   top: 23px;
   right: 27px;
   cursor: pointer;
+}
+
+/* --- Tuum card --- */
+
+.formTypeSelectorWrapper select {
+  letter-spacing: 0.5px;
+}
+
+#creationType {
+  text-align: center;
+  border-radius: 8px;
+  width: fit-content;
+  height: 50%;
+  border: none;
+  padding: 10px;
+  color: black;
+  background-color: var(--blue);
+}
+#formSearchBar {
+  align-items: center;
+  border-radius: 8px;
+  width: 60%;
+  height: 50%;
+  border: none;
+  padding: 10px;
+  color: black;
+  background-color: var(--egg-shell);
 }
 
 /* -------------------  Left bar ------------------- */
