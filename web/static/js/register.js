@@ -35,6 +35,10 @@ async function hash(string) {
 }
 
 async function hashSubmit(logType) {
+    if (!validateForm()) {
+        alert("Form validation failed. Please correct the errors and try again.");
+        return;
+    }
     document.getElementsByName("hash")[logType].value = await hash(document.getElementsByName("password")[logType].value);
     switch (logType) {
         case 0:
@@ -45,3 +49,44 @@ async function hashSubmit(logType) {
             break;
     }
 }
+
+function validateForm() {
+    // Get form elements
+    var username = document.getElementById('username').value;
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+
+    // Check if all fields are filled
+    if (username === "" || email === "" || password === "") {
+        alert("All fields must be filled out");
+        return false;
+    }
+
+    // Check if email is valid
+    var emailRegex = /^[a-zA-Z0-9._%+-]+@.+(\.com|\.fr)$/;
+    if (!emailRegex.test(email)) {
+        alert("Email address is not valid");
+        return false;
+    }
+
+    // Check if password is longer than 2 characters
+    if (password.length <= 2) {
+        alert("Password is too short or incorrect");
+        return false;
+    }
+
+    // If all checks pass, return true
+    return true;
+}
+
+document.getElementById('registerForm').addEventListener('submit', function(event) {
+    if (!validateForm()) {
+        event.preventDefault();
+    }
+});
+
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+    if (!validateForm()) {
+        event.preventDefault();
+    }
+});
