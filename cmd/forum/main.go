@@ -18,7 +18,7 @@ func main() {
 	r.HandleFunc("/", handlers.RedirectToIndex)
 	s := r.PathPrefix("/").Subrouter()
 	s.Use(middleware.AuthMiddleware)
-
+	s.HandleFunc("/logout", handlers.Logout)
 	s.HandleFunc("/tuums", handlers.RedirectToTuums)
 	s.HandleFunc("/profile", handlers.RedirectToProfile)
 	s.HandleFunc("/create", handlers.RedirectToCreate)

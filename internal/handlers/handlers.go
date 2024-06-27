@@ -143,3 +143,13 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 func RedirectToCreate(w http.ResponseWriter, r *http.Request) {
 	ExecTmpl(w, "web/templates/create.html", nil)
 }
+
+func Logout(w http.ResponseWriter, r *http.Request) {
+	// Delete the cookie by setting an expired date
+	http.SetCookie(w, &http.Cookie{
+		Name:    "session_token",
+		Value:   "",
+		Expires: time.Now(),
+	})
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
