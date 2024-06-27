@@ -36,7 +36,7 @@ async function hash(string) {
 
 async function hashSubmit(logType) {
     if (!validateForm()) {
-        alert("Form validation failed. Please correct the errors and try again.");
+        alert("Ca marche pas.");
         return;
     }
     document.getElementsByName("hash")[logType].value = await hash(document.getElementsByName("password")[logType].value);
