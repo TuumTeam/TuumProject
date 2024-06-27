@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tuum</title>
+    <link rel="icon" href="/static/img/TuumLogo.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -95,41 +95,63 @@
     </div>
 
     <div id="popup" class="popup-container" style="display: none">
-      <form action="/tuums" method="post">
+      <form action="/" method="post">
         <div class="popup-content">
-          <h1 class="TuumPopupTitle lato-black">Create new Tuum</h1>
-          <div class="titleTumm-wrapper">
+          <!-- wrapper1 -->
+          <div class="formTypeSelectorWrapper">
+            <select
+              name="creationSelector"
+              class="lato-black"
+              id="creationType"
+            >
+              <option class="lato-regular" value="newTuum">
+                Create New Tuum
+              </option>
+              <option class="lato-regular" value="newRoom">
+                Create New Room
+              </option>
+            </select>
+          </div>
+          <!-- wrapper2 -->
+          <div id="researchBar" class="formSearchBarWrapper">
+            <input
+              type="search"
+              id="formSearchBar"
+              placeholder="Search Rooms here"
+            />
+          </div>
+          <!-- wrapper3 -->
+          <div id="title" class="titleTumm-wrapper">
             <div>
-              <label class="lato-bold form-Labels" for="title" >Title</label>
+              <label class="lato-bold form-Labels" for="title">Title</label>
               <textarea
                 requried
                 class="popup-title popup-inputs"
                 type="text"
                 placeholder="Write here"
-                name="title"
               ></textarea>
             </div>
           </div>
-          <div class="description-wrapper">
+          <!-- wrapper4 -->
+          <div id="description" class="description-wrapper">
             <div>
-              <label class="lato-bold" for="description" >Description</label>
+              <label class="lato-bold" for="description">Description</label>
               <textarea
                 required
                 class="popup-description popup-inputs"
                 type="text"
                 placeholder="Write here"
-                name="description"
               ></textarea>
             </div>
           </div>
+          <!-- wrapper5 -->
           <div class="btn-wrapper">
             <input class="popup-close-btn" type="submit" value="Submit" />
           </div>
         </div>
       </form>
+      <i id="leaveTuumBtn" class="fa-solid fa-xmark leave-btn"></i>
     </div>
-
-    <button type="button" id="leaveTuumBtn" class="leave-btn">Leave</button>
 
     <script src="/static/js/index.js"></script>
 

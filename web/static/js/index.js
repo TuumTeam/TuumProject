@@ -44,9 +44,41 @@ const leaveTuumBtn = document.getElementById("leaveTuumBtn");
 
 newTuum.addEventListener("click", () => {
   windowWrapper.classList.add("blur");
-
-  // Show the popup
   popup.style.display = "block";
+});
+
+// Add event listener to the creation type dropdown
+document.getElementById("creationType").addEventListener("change", function () {
+  var selection = this.value;
+  const hashtag = document.getElementById("hashtagArea");
+  const research = document.getElementById("researchBar");
+  const description = document.getElementById("description");
+  const title = document.getElementById("title");
+  if (selection === "newTuum") {
+    research.style.display = "flex";
+
+    description.style.gridRow = 4;
+    title.style.gridRow = 3;
+
+    // // Create and insert hashtag area
+    // const hashtagArea = document.createElement("input");
+    // hashtagArea.setAttribute("type", "text");
+    // hashtagArea.setAttribute("placeholder", "Enter hashtags");
+    // hashtagArea.id = "hashtagArea";
+    // hashtagArea.className = "popup-inputs";
+    // document.getElementById("popup").appendChild(hashtagArea);
+    // // Create and insert research bar
+    // const researchBar = document.createElement("input");
+    // researchBar.setAttribute("type", "search");
+    // researchBar.setAttribute("placeholder", "Search for a salon");
+    // researchBar.id = "researchBar";
+    // researchBar.className = "popup-inputs";
+    // document.getElementById("popup").appendChild(researchBar);
+    // console.log("newTuum");
+  } else if (selection === "newRoom") {
+    research.style.display = "none";
+    console.log("newSalon");
+  }
 });
 
 document.getElementById("leaveTuumBtn").addEventListener("click", function () {

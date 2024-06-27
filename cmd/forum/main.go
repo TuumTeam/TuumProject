@@ -22,6 +22,12 @@ func main() {
 	s.HandleFunc("/tuums", handlers.RedirectToTuums)
 	s.HandleFunc("/profile", handlers.RedirectToProfile)
 	s.HandleFunc("/create", handlers.RedirectToCreate)
+	r.HandleFunc("/auth/google/login", handlers.OAuthLogin)
+	r.HandleFunc("/auth/github/login", handlers.OAuthLogin)
+	r.HandleFunc("/auth/facebook/login", handlers.OAuthLogin)
+	r.HandleFunc("/auth/google/callback", handlers.OAuthCallback)
+	r.HandleFunc("/auth/github/callback", handlers.OAuthCallback)
+	r.HandleFunc("/auth/facebook/callback", handlers.OAuthCallback)
 
 	fmt.Println("Server starting at http://localhost:8080...")
 	err := http.ListenAndServe(":8080", r)
