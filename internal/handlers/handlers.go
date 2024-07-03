@@ -92,11 +92,6 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 
 	// Get user details from the database
 	user := database.GetUserByEmail(claims.Email)
-	if err != nil {
-		// If there is an error in getting the user, return an internal server error
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
 
 	// Execute the profile template with the user data
 	ExecTmpl(w, "web/templates/profile.html", user)
