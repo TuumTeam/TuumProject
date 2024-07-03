@@ -28,8 +28,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 		ExecTmpl(w, "web/templates/register.html", nil)
 	} else {
 		if r.FormValue("LogType") == "Login" {
-			logBool := database.Login(r.FormValue("email"), r.FormValue("hash"))
-			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("password"))
+			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("hash"))
 			if logBool {
 				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
 				if err != nil {
