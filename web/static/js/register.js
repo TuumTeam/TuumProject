@@ -5,6 +5,11 @@ const loginBtn = document.getElementById('login');
 document.addEventListener('keydown', function(event) {
     if (event.keyCode === 13) {
         event.preventDefault();
+        if (container.classList.contains("active")) {
+            hashSubmit(0);
+        } else {
+            hashSubmit(1);
+        }
     }
 });
 
