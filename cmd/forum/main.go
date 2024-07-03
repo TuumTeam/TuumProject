@@ -19,16 +19,27 @@ func main() {
 	// Gestion des fichiers statiques
 	fs := http.FileServer(http.Dir("./web/static"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
+	r.HandleFunc("/login", handlers.RedirectToLogin)
+	r.HandleFunc("/", handlers.RedirectToIndex)
 
 	// Routes
 	r.HandleFunc("/", handlers.RedirectToIndex)
 
 	s := r.PathPrefix("/").Subrouter()
 	s.Use(middleware.AuthMiddleware)
+	s.HandleFunc("/logout", handlers.Logout)
+	s.HandleFunc("/tuums", handlers.RedirectToTuums)
 	s.Use(middleware.RateLimiter) // Add the rate limiter middleware
 	s.HandleFunc("/profile", handlers.RedirectToProfile)
 
 	dbPath := "./database/forum.db"
+	s.HandleFunc("/create", handlers.RedirectToCreate)
+	r.HandleFunc("/auth/google/login", handlers.OAuthLogin)
+	r.HandleFunc("/auth/github/login", handlers.OAuthLogin)
+	r.HandleFunc("/auth/facebook/login", handlers.OAuthLogin)
+	r.HandleFunc("/auth/google/callback", handlers.OAuthCallback)
+	r.HandleFunc("/auth/github/callback", handlers.OAuthCallback)
+	r.HandleFunc("/auth/facebook/callback", handlers.OAuthCallback)
 
 	// Check if the database file exists
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {

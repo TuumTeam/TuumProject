@@ -28,9 +28,9 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 		ExecTmpl(w, "web/templates/register.html", nil)
 	} else {
 		if r.FormValue("LogType") == "Login" {
+			logBool := database.Login(r.FormValue("email"), r.FormValue("hash"))
 			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("password"))
 			if logBool {
-				// Generate JWT
 				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
 				if err != nil {
 					http.Error(w, "Failed to generate token", http.StatusInternalServerError)
@@ -44,13 +44,12 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 					Expires:  time.Now().Add(24 * time.Hour),
 					HttpOnly: true,
 				})
-				http.Redirect(w, r, "/", http.StatusSeeOther)
+				http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 			} else {
 				http.Error(w, "Login failed", http.StatusUnauthorized)
 			}
 		} else {
-			database.CreateUser(r.FormValue("username"), r.FormValue("email"), r.FormValue("password"))
-			fmt.Printf(r.FormValue("password"))
+			database.CreateUser(r.FormValue("username"), r.FormValue("email"), r.FormValue("hash"))
 			token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
 			if err != nil {
 				http.Error(w, "Failed to generate token", http.StatusInternalServerError)
@@ -65,7 +64,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 				HttpOnly: true,
 			})
 
-			http.Redirect(w, r, "/profile", http.StatusSeeOther)
+			http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 		}
 	}
 }
@@ -144,4 +143,14 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 
 func RedirectToCreate(w http.ResponseWriter, r *http.Request) {
 	ExecTmpl(w, "web/templates/create.html", nil)
+}
+
+func Logout(w http.ResponseWriter, r *http.Request) {
+	// Delete the cookie by setting an expired date
+	http.SetCookie(w, &http.Cookie{
+		Name:    "session_token",
+		Value:   "",
+		Expires: time.Now(),
+	})
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

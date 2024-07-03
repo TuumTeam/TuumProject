@@ -2,9 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tuum</title>
-    
+    <link rel="icon" href="/static/img/TuumLogo.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -22,7 +21,7 @@
     />
   </head>
   <body>
-    <div class="windowWrapper">
+    <div id="windowWrapper">
       <div class="containerGrid">
         <header class="topBar">
           <i
@@ -39,7 +38,6 @@
               />
             </div>
             <div id="newTuum">
-              <!-- <span class="lato-regular">New Tuum</span> -->
               <i class="fa-regular fa-square-plus svg"></i>
             </div>
           </section>
@@ -54,6 +52,17 @@
           </div>
 
           <div class="userProfile"></div>
+          <div id="profile-menu" class="lato-regular hidden">
+            <div class="menu-item">
+              <i class="fa-regular fa-user userMenuSvg"></i>
+              <a href="/profile">Profile</a>
+            </div>
+            <div class="menu-item">
+              <i class="fa-solid fa-arrow-right-from-bracket userMenuSvg"></i>
+
+              <a href="/logout">Logout</a>
+            </div>
+          </div>
         </header>
         <div class="leftBar">
           <div class="leftBarWrapper">
@@ -85,6 +94,65 @@
       </div>
     </div>
 
+    <div id="popup" class="popup-container" style="display: none">
+      <form action="/" method="post">
+        <div class="popup-content">
+          <!-- wrapper1 -->
+          <div class="formTypeSelectorWrapper">
+            <select
+              name="creationSelector"
+              class="lato-black"
+              id="creationType"
+            >
+              <option class="lato-regular" value="newTuum">
+                Create New Tuum
+              </option>
+              <option class="lato-regular" value="newRoom">
+                Create New Room
+              </option>
+            </select>
+          </div>
+          <!-- wrapper2 -->
+          <div id="researchBar" class="formSearchBarWrapper">
+            <input
+              type="search"
+              id="formSearchBar"
+              placeholder="Search Rooms here"
+            />
+          </div>
+          <!-- wrapper3 -->
+          <div id="title" class="titleTumm-wrapper">
+            <div>
+              <label class="lato-bold form-Labels" for="title">Title</label>
+              <textarea
+                requried
+                class="popup-title popup-inputs"
+                type="text"
+                placeholder="Write here"
+              ></textarea>
+            </div>
+          </div>
+          <!-- wrapper4 -->
+          <div id="description" class="description-wrapper">
+            <div>
+              <label class="lato-bold" for="description">Description</label>
+              <textarea
+                required
+                class="popup-description popup-inputs"
+                type="text"
+                placeholder="Write here"
+              ></textarea>
+            </div>
+          </div>
+          <!-- wrapper5 -->
+          <div class="btn-wrapper">
+            <input class="popup-close-btn" type="submit" value="Submit" />
+          </div>
+        </div>
+      </form>
+      <i id="leaveTuumBtn" class="fa-solid fa-xmark leave-btn"></i>
+    </div>
+
     <script src="/static/js/index.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/darkreader@latest/darkreader.min.js"></script>
@@ -110,6 +178,24 @@
           const isDark = !document.body.classList.toggle("dark-mode");
           toggleDarkMode(isDark);
           localStorage.setItem("darkMode", isDark);
+        });
+
+      document
+        .querySelector(".userProfile")
+        .addEventListener("click", function () {
+          var menu = document.getElementById("profile-menu");
+          if (menu.classList.contains("hidden")) {
+            menu.classList.remove("hidden", "fadeOut");
+            menu.classList.add("fadeIn");
+            menu.style.display = "block"; // Ensure the menu is shown
+          } else {
+            menu.classList.remove("fadeIn");
+            menu.classList.add("fadeOut");
+            setTimeout(() => {
+              menu.classList.add("hidden");
+              menu.style.display = "none"; // Hide the menu after animation
+            }, 500); // Ensure this matches the animation duration
+          }
         });
     </script>
   </body>
