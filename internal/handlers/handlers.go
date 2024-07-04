@@ -84,7 +84,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 					Path:     "/",                            // Set cookie for entire website
 					Expires:  time.Now().Add(24 * time.Hour), // Set expiration time
 					HttpOnly: true,                           // Make cookie inaccessible to JavaScript
-					Secure:   false,                          // Set to true if serving over HTTPS
+					Secure:   true,                           // Set to true if serving over HTTPS
 				})
 				http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 			} else {
@@ -105,7 +105,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 				Path:     "/",                            // Set cookie for entire website
 				Expires:  time.Now().Add(24 * time.Hour), // Set expiration time
 				HttpOnly: true,                           // Make cookie inaccessible to JavaScript
-				Secure:   false,                          // Set to true if serving over HTTPS
+				Secure:   true,                           // Set to true if serving over HTTPS
 			})
 
 			http.Redirect(w, r, "/tuums", http.StatusSeeOther)

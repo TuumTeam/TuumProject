@@ -18,8 +18,8 @@ func main() {
 	r.HandleFunc("/search", handlers.SearchHandler).Methods("GET")
 
 	// Define routes
-	r.HandleFunc("/login", handlers.RedirectToLogin).Methods("GET", "POST")
-	r.HandleFunc("/", handlers.RedirectToIndex).Methods("GET", "POST")
+	r.HandleFunc("/login", handlers.RedirectToLogin)
+	r.HandleFunc("/", handlers.RedirectToIndex)
 
 	// Subrouter for authenticated routes
 	s := r.PathPrefix("/").Subrouter()
@@ -47,7 +47,7 @@ func main() {
 	}
 
 	// Start the server
-	log.Println("Server started at https://localhost:443")
+	log.Println("Server started at https://localhost")
 	err := server.ListenAndServeTLS("key/localhost.crt", "key/localhost.key")
 	if err != nil {
 		log.Fatal("Server startup error: ", err)
