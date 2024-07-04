@@ -7,8 +7,119 @@
     <link rel="stylesheet" href="../static/stylesheets/tuum.css" />
   </head>
   <body>
-    <h1>GUILLAUME FAUT TRAVAILLER</h1>
-    <p>La Tuumsy Familly</p>
-    <a href="/tuums">tuums</a>
+  <header id="toogleDarkmodeDiv">
+    <div id="darkModeToggle">
+      <input type="checkbox" class="checkbox" id="checkbox" checked />
+      <label for="checkbox" class="checkbox-label">
+        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
+        <span class="ball"></span>
+      </label>
+    </div>
+    <h1>Bienvenue sur Tuums Team</h1>
+  </header>
+  <main class="container">
+    <section id="intro" class="grid-item">
+      <h2>Qu'est-ce que Tuums Team ?</h2>
+      <p>Tuums Team est une application web de forum innovante qui permet de créer des salons de discussion et des posts interactifs appelés "Tuums". Que vous souhaitiez discuter de sujets spécifiques, partager des idées ou collaborer avec d'autres utilisateurs, Tuums Team est l'endroit idéal pour vous.</p>
+    </section>
+
+    <section id="features" class="grid-item">
+      <h2>Fonctionnalités Clés</h2>
+      <ul>
+        <li><strong>Créer des Salons :</strong> Créez des salons pour des sujets spécifiques et invitez d'autres utilisateurs à rejoindre la conversation.</li>
+        <li><strong>Publier des Tuums :</strong> Partagez vos pensées, questions ou idées en créant des "Tuums" dans les salons.</li>
+        <li><strong>Interaction Facile :</strong> Commentez, aimez et partagez les Tuums pour une interaction fluide et engageante.</li>
+        <li><strong>Gestion des Salons :</strong> Modérez et organisez vos salons avec des outils simples et efficaces.</li>
+        <li><strong>Notifications Personnalisées :</strong> Recevez des notifications en temps réel pour rester à jour avec les dernières activités dans vos salons préférés.</li>
+      </ul>
+    </section>
+
+    <div class="image grid-item" id="features-image">
+      <img src="../static/img/gabriel.jpg" alt="Gabriel">
+    </div>
+
+    <div class="image grid-item" id="why-image">
+      <img src="../static/img/gabriel2.jpg" alt="Gabriel2">
+    </div>
+    <section id="why" class="grid-item">
+      <h2>Pourquoi Choisir Tuums Team ?</h2>
+      <ul>
+        <li><strong>Communauté Engagée :</strong> Rejoignez une communauté active et passionnée prête à échanger et collaborer.</li>
+        <li><strong>Interface Intuitive :</strong> Profitez d'une interface utilisateur simple et conviviale, conçue pour faciliter la navigation et l'interaction.</li>
+        <li><strong>Sécurité et Confidentialité :</strong> Vos données sont sécurisées et votre confidentialité est notre priorité absolue.</li>
+        <li><strong>Support Réactif :</strong> Une équipe de support dédiée est disponible pour répondre à vos questions et résoudre vos problèmes rapidement.</li>
+      </ul>
+    </section>
+
+    <section id="how-to-start" class="grid-item">
+      <h2>Comment Commencer ?</h2>
+      <ol>
+        <li><strong>Inscrivez-vous :</strong> Créez un compte gratuitement pour accéder à toutes les fonctionnalités de Tuums Team.</li>
+        <li><strong>Explorez les Salons :</strong> Parcourez les salons existants ou créez le vôtre.</li>
+        <li><strong>Partagez vos Tuums :</strong> Publiez vos premiers Tuums et engagez la conversation avec d'autres membres.</li>
+        <li><strong>Interagissez :</strong> Commentez, aimez et participez aux discussions pour enrichir votre expérience.</li>
+      </ol>
+    </section>
+
+    <section id="join" class="grid-item">
+      <h2>Rejoignez-nous dès aujourd'hui !</h2>
+      <p>Ne manquez pas l'opportunité de faire partie de Tuums Team. Que vous soyez à la recherche d'un espace pour partager vos idées ou de nouveaux amis pour discuter de vos passions, Tuums Team est là pour vous.</p>
+      <a href="#" class="btn">Inscrivez-vous maintenant</a>
+    </section>
+
+    <section id="contact" class="grid-item">
+      <h2>Contactez-nous</h2>
+      <p>Pour toute question ou assistance, n'hésitez pas à nous contacter :</p>
+      <div class="contact-info">
+        <a href="mailto:tuumteams@gmail.com"><strong>Email :</strong> tuumteams@gmail.com</a>
+        <a href="tel:+33123456789"><strong>Téléphone :</strong> +33 1 23 45 67 89</a>
+        <a href="https://www.google.com/maps?q=Avenue+Gabriel" target="_blank"><strong>Adresse :</strong> Avenue Gabriel</a>
+      </div>
+      <p>Suivez-nous sur les réseaux sociaux pour les dernières mises à jour et actualités :</p>
+      <div class="social-media">
+        <a href="#">Facebook</a>
+        <a href="#">Twitter</a>
+        <a href="#">Instagram</a>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2024 Tuums Team. Tous droits réservés.</p>
+  </footer>
+  <a href="/register" class="fixed-btn"> Inscrivez-vous ! </a>
+  <script src="https://cdn.jsdelivr.net/npm/darkreader@latest/darkreader.min.js"></script>
+  <script>
+    window.onload = DarkReader.enable();
+    // Function to toggle dark mode
+    function toggleDarkMode(isDark) {
+      if (isDark) {
+        console.log("Dark mode enabled");
+        DarkReader.enable({
+          brightness: 100,
+          contrast: 90,
+          sepia: 10,
+        });
+      } else {
+        DarkReader.disable();
+      }
+    }
+
+    // Load user's preference for dark mode
+    const darkModePreference = localStorage.getItem("darkMode") === "true";
+    if (darkModePreference) {
+      toggleDarkMode(true);
+    }
+
+    // Event listener for dark mode toggle button
+    document
+            .getElementById("darkModeToggle")
+            .addEventListener("change", () => {
+              const isDark = !document.body.classList.toggle("dark-mode");
+              toggleDarkMode(isDark);
+              localStorage.setItem("darkMode", isDark);
+            });
+  </script>
   </body>
 </html>
+
