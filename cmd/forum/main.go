@@ -16,6 +16,9 @@ func main() {
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 	r.HandleFunc("/login", handlers.RedirectToLogin)
 	r.HandleFunc("/", handlers.RedirectToIndex)
+
+	r.HandleFunc("/search", handlers.SearchHandler).Methods("GET")
+
 	s := r.PathPrefix("/").Subrouter()
 	s.Use(middleware.AuthMiddleware)
 	s.HandleFunc("/logout", handlers.Logout)
