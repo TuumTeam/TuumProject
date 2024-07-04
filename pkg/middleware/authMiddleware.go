@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"tuum.com/internal/auth"
 )
@@ -21,9 +22,9 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		tokenString := cookie.Value
 
-		// Validate JWT
 		claims, err := auth.ValidateJWT(tokenString)
 		if err != nil {
+			fmt.Printf("Error validating JWT: %v\n", err)
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
