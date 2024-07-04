@@ -13,6 +13,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		cookie, err := r.Cookie("session_token")
 		if err != nil {
 			if errors.Is(err, http.ErrNoCookie) {
+				fmt.Printf("No session token found: %v\n", err)
 				http.Redirect(w, r, "/login", http.StatusSeeOther)
 				return
 			}

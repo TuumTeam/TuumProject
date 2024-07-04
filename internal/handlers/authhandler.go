@@ -79,12 +79,14 @@ func OAuthCallback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 		return
 	}
+	// Set JWT as cookie
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session_token",
-		Value:    token,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
+		Name:     "session_token",                // Cookie name
+		Value:    token,                          // JWT token as the value
+		Path:     "/",                            // Set cookie for entire website
+		Expires:  time.Now().Add(24 * time.Hour), // Set expiration time
+		HttpOnly: true,                           // Make cookie inaccessible to JavaScript
+		Secure:   false,                          // Set to true if serving over HTTPS
 	})
-
 	http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 }
