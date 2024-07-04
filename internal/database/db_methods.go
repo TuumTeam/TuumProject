@@ -37,10 +37,10 @@ func CreateRoom(name, description string) {
 	fmt.Println("Room created successfully")
 }
 
-func CreatePost(title, content string) {
+func CreatePost(userID, roomID int, title, content string) {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
 	query := `INSERT INTO posts (user_id, room_id, title, content, created_at) VALUES (?, ?, ?, ?, ?)`
-	_, err := db.Exec(query, title, content, time.Now())
+	_, err := db.Exec(query, userID, roomID, title, content, time.Now())
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -144,6 +144,17 @@ func GetRoomByName(name string) Room {
 		return Room{}
 	}
 	return room
+}
+func GetRoomIdByName(name string) int {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	row := db.QueryRow("SELECT id FROM rooms WHERE name = ?", name)
+	var room Room
+	err := row.Scan(&room.ID)
+	if err != nil {
+		fmt.Println(err)
+		return room.ID
+	}
+	return room.ID
 }
 
 func GetPosts() []Post {

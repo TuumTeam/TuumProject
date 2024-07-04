@@ -133,26 +133,31 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 
 	// Get user details from the database
 	user := database.GetUserByEmail(claims.Email)
-	if err != nil {
-		// If there is an error in getting the user, return an internal server error
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
 
 	// Execute the profile template with the user data
 	ExecTmpl(w, "web/templates/profile.html", user)
 }
 
 func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("tuum:")
 	if r.Method == http.MethodPost {
+
 		fmt.Println("test")
 		if r.FormValue("creationSelector") == "newRoom" {
-			fmt.Println("newRoom")
 			database.CreateRoom(r.FormValue("title"), r.FormValue("description"))
 		} else if r.FormValue("creationSelector") == "newTuum" {
-			fmt.Println("newTuum")
-			database.CreatePost(r.FormValue("title"), r.FormValue("description"))
+			token := r.Header.Get("Authorization")
+			userEmail, err := auth.GetUserEmailFromToken(token)
+			if err != nil {
+				// Gérer l'erreur, par exemple en renvoyant une erreur HTTP
+				log.Printf("Erreur lors de la récupération du nom d'utilisateur à partir du token : %v", err)
+				http.Error(w, "Token invalide", http.StatusUnauthorized)
+				return
+			}
+			User := database.GetUserByEmail(userEmail)
+			idUser := User.ID
+			nameRoom := r.FormValue("searchRomm")
+			idRoom := database.GetRoomIdByName(nameRoom)
+			database.CreatePost(idUser, idRoom, r.FormValue("title"), r.FormValue("description"))
 		} else {
 			fmt.Println("rien")
 		}
