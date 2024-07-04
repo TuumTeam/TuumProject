@@ -91,7 +91,11 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get user details from the database
-	user := database.GetUserByEmail(claims.Email)
+	user, _ := database.GetUserByEmail(claims.Email)
+	if err != nil {
+		http.Error(w, "Failed to get user", http.StatusInternalServerError)
+		return
+	}
 
 	// Execute the profile template with the user data
 	ExecTmpl(w, "web/templates/profile.html", user)
@@ -99,7 +103,12 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 
 func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		ExecTmpl(w, "web/templates/Tuum.html", nil)
+		var socials = socials{
+			Google:   googleOauthConfig,
+			Github:   githubOauthConfig,
+			Facebook: facebookOauthConfig,
+		}
+		ExecTmpl(w, "web/templates/Tuum.html", socials)
 	} else {
 		if r.FormValue("LogType") == "Login" {
 			logBool := database.Login(r.FormValue("email"), r.FormValue("password"))
@@ -129,7 +138,7 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 					http.Error(w, "Unable to add user to database", http.StatusInternalServerError)
 					return
 				}
-				http.Redirect(w, r, "/tumms", http.StatusSeeOther)
+				http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 			}
 		}
 	}

@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
+	"log"
 	"time"
 	"tuum.com/internal/models"
-	_ "tuum.com/internal/models"
 )
 
 type User models.User
@@ -101,16 +101,21 @@ func GetUser(id int) User {
 	}
 	return user
 }
+func GetUserByEmail(email string) (User, error) {
+	db, err := sql.Open("sqlite3", "./database/forum.db")
+	if err != nil {
+		log.Printf("Error opening database connection: %v", err)
+		return User{}, err
+	}
+	defer db.Close()
 
-func GetUserByEmail(email string) User {
-	db, _ := sql.Open("sqlite3", "./database/forum.db")
 	row := db.QueryRow("SELECT id, username, email, created_at FROM users WHERE email = ?", email)
 	var user User
 	if err := row.Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt); err != nil {
-		fmt.Println(err)
-		return User{}
+		log.Printf("Error retrieving user by email (%s): %v", email, err)
+		return User{}, err
 	}
-	return user
+	return user, nil
 }
 
 func GetRooms() []Room {
