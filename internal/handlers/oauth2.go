@@ -7,6 +7,12 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
+type socials struct {
+	Google   *oauth2.Config
+	Github   *oauth2.Config
+	Facebook *oauth2.Config
+}
+
 // Replace these with your actual credentials
 var (
 	googleOauthConfig = &oauth2.Config{

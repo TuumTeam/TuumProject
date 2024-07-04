@@ -79,10 +79,12 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 
 				// Set JWT as cookie
 				http.SetCookie(w, &http.Cookie{
-					Name:     "session_token",
-					Value:    token,
-					Expires:  time.Now().Add(24 * time.Hour),
-					HttpOnly: true,
+					Name:     "session_token",                // Cookie name
+					Value:    token,                          // JWT token as the value
+					Path:     "/",                            // Set cookie for entire website
+					Expires:  time.Now().Add(24 * time.Hour), // Set expiration time
+					HttpOnly: true,                           // Make cookie inaccessible to JavaScript
+					Secure:   false,                          // Set to true if serving over HTTPS
 				})
 				http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 			} else {
@@ -98,10 +100,12 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 
 			// Set JWT as cookie
 			http.SetCookie(w, &http.Cookie{
-				Name:     "session_token",
-				Value:    token,
-				Expires:  time.Now().Add(24 * time.Hour),
-				HttpOnly: true,
+				Name:     "session_token",                // Cookie name
+				Value:    token,                          // JWT token as the value
+				Path:     "/",                            // Set cookie for entire website
+				Expires:  time.Now().Add(24 * time.Hour), // Set expiration time
+				HttpOnly: true,                           // Make cookie inaccessible to JavaScript
+				Secure:   false,                          // Set to true if serving over HTTPS
 			})
 
 			http.Redirect(w, r, "/tuums", http.StatusSeeOther)
@@ -132,7 +136,12 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get user details from the database
-	user := database.GetUserByEmail(claims.Email)
+	user, _ := database.GetUserByEmail(claims.Email)
+	if err != nil {
+		// If there is an error in getting the user, return an internal server error
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	// Execute the profile template with the user data
 	ExecTmpl(w, "web/templates/profile.html", user)
