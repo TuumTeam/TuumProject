@@ -132,7 +132,7 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get user details from the database
-	user := database.GetUserByEmail(claims.Email)
+	user, _ := database.GetUserByEmail(claims.Email)
 	if err != nil {
 		// If there is an error in getting the user, return an internal server error
 		w.WriteHeader(http.StatusInternalServerError)

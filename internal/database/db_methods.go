@@ -103,15 +103,15 @@ func GetUser(id int) User {
 	return user
 }
 
-func GetUserByEmail(email string) User {
+func GetUserByEmail(email string) (User, error) {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
 	row := db.QueryRow("SELECT id, username, email, created_at FROM users WHERE email = ?", email)
 	var user User
 	if err := row.Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt); err != nil {
 		fmt.Println(err)
-		return User{}
+		return User{}, err
 	}
-	return user
+	return user, nil
 }
 
 func GetRooms() []Room {
