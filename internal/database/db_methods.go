@@ -3,8 +3,9 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/mattn/go-sqlite3"
 	"time"
+
+	_ "github.com/mattn/go-sqlite3"
 	"tuum.com/internal/models"
 	_ "tuum.com/internal/models"
 )
@@ -36,15 +37,26 @@ func CreateRoom(name, description string) {
 	fmt.Println("Room created successfully")
 }
 
-func CreatePost(userID, roomID int, title, content string) {
+func CreatePost(title, content string) {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
 	query := `INSERT INTO posts (user_id, room_id, title, content, created_at) VALUES (?, ?, ?, ?, ?)`
-	_, err := db.Exec(query, userID, roomID, title, content, time.Now())
+	_, err := db.Exec(query, title, content, time.Now())
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Println("Post created successfully")
+}
+
+func CreateComment(postID, userID int, content string) {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	query := `INSERT INTO comments (post_id, user_id, content, created_at) VALUES (?, ?, ?, ?)`
+	_, err := db.Exec(query, postID, userID, content, time.Now())
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("Comment created successfully")
 }
 
 func AddPost(post models.Post) error {
@@ -57,17 +69,6 @@ func AddPost(post models.Post) error {
 	}
 	fmt.Println("Post created successfully")
 	return nil
-}
-
-func CreateComment(postID, userID int, content string) {
-	db, _ := sql.Open("sqlite3", "./database/forum.db")
-	query := `INSERT INTO comments (post_id, user_id, content, created_at) VALUES (?, ?, ?, ?)`
-	_, err := db.Exec(query, postID, userID, content, time.Now())
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println("Comment created successfully")
 }
 
 func GetUsers() []User {
@@ -136,6 +137,17 @@ func GetRooms() []Room {
 		rooms = append(rooms, room)
 	}
 	return rooms
+}
+
+func GetRoomByName(name string) Room {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	row := db.QueryRow("SELECT id, name, description, created_at FROM rooms WHERE name = ?", name)
+	var room Room
+	if err := row.Scan(&room.ID, &room.Name, &room.Description, &room.CreatedAt); err != nil {
+		fmt.Println(err)
+		return Room{}
+	}
+	return room
 }
 
 func GetPosts() []Post {

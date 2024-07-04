@@ -19,6 +19,8 @@
       type="text/css"
       href="static/stylesheets/index.css"
     />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
   </head>
   <body>
     <div id="windowWrapper">
@@ -95,7 +97,7 @@
     </div>
 
     <div id="popup" class="popup-container" style="display: none">
-      <form action="/" method="post">
+      <form action="/tuums" method="post">
         <div class="popup-content">
           <!-- wrapper1 -->
           <div class="formTypeSelectorWrapper">
@@ -117,9 +119,14 @@
             <input
               type="search"
               id="formSearchBar"
-              placeholder="Search Rooms here"
+              placeholder="Attach to a Rooms here"
+              name="searchRomm"
+              list="searchBarProposition"
             />
           </div>
+            <datalist id="searchBarProposition">
+            </datalist>
+          
           <!-- wrapper3 -->
           <div id="title" class="titleTumm-wrapper">
             <div>
@@ -129,6 +136,7 @@
                 class="popup-title popup-inputs"
                 type="text"
                 placeholder="Write here"
+                name="title"
               ></textarea>
             </div>
           </div>
@@ -141,6 +149,7 @@
                 class="popup-description popup-inputs"
                 type="text"
                 placeholder="Write here"
+                name="description"
               ></textarea>
             </div>
           </div>

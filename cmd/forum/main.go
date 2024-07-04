@@ -22,6 +22,9 @@ func main() {
 	r.HandleFunc("/login", handlers.RedirectToLogin)
 	r.HandleFunc("/", handlers.RedirectToIndex)
 
+	r.HandleFunc("/search", handlers.SearchHandler).Methods("GET")
+
+
 	// Routes
 	r.HandleFunc("/", handlers.RedirectToIndex)
 
