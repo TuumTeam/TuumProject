@@ -5,6 +5,11 @@ const loginBtn = document.getElementById('login');
 document.addEventListener('keydown', function(event) {
     if (event.keyCode === 13) {
         event.preventDefault();
+        if (container.classList.contains("active")) {
+            hashSubmit(0);
+        } else {
+            hashSubmit(1);
+        }
     }
 });
 
@@ -35,13 +40,13 @@ async function hash(string) {
 }
 
 async function hashSubmit(logType) {
-    if (!validateForm()) {
-        alert("Form validation failed. Please correct the errors and try again.");
-        return;
-    }
     document.getElementsByName("hash")[logType].value = await hash(document.getElementsByName("password")[logType].value);
     switch (logType) {
         case 0:
+            if (!validateForm()) {
+                alert("Form validation failed. Please correct the errors and try again.");
+                return;
+            }
             document.getElementById("registerForm").submit();
             break;
         case 1:
@@ -80,12 +85,6 @@ function validateForm() {
 }
 
 document.getElementById('registerForm').addEventListener('submit', function(event) {
-    if (!validateForm()) {
-        event.preventDefault();
-    }
-});
-
-document.getElementById('loginForm').addEventListener('submit', function(event) {
     if (!validateForm()) {
         event.preventDefault();
     }
