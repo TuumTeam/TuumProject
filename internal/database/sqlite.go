@@ -85,18 +85,18 @@ func createTables(db *sql.DB) {
 	fmt.Println("Tables created successfully")
 }
 
-func Login(email string, password string) bool {
+func Login(email string, password string) (bool, bool) {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
 	query := `SELECT * FROM users WHERE email = ?`
 	row := db.QueryRow(query, email)
 	user := models.User{}
 	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
 	if err != nil {
-		return false
+		return false, false
 	}
 	if password == user.Password {
-		return true
+		return true, false
 	} else {
-		return false
+		return false, false
 	}
 }

@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"math/rand"
@@ -29,6 +28,9 @@ type Claims struct {
 }
 
 func GenerateJWT(username, email string) (string, error) {
+	if jwtKey == nil {
+		jwtKey = []byte(generateSessionToken())
+	}
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
 		Username: username,
@@ -39,25 +41,30 @@ func GenerateJWT(username, email string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtKey)
+	returnValue, err := token.SignedString(jwtKey)
+	if err != nil {
+		fmt.Printf("Error signing token: %v\n", err)
+		return "", err
+	}
+	return returnValue, nil
 }
 
 func ValidateJWT(tokenString string) (*Claims, error) {
 	claims := &Claims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
 		return jwtKey, nil
 	})
 
 	if err != nil {
-		if errors.Is(err, jwt.ErrSignatureInvalid) {
-			return nil, err
-		}
 		return nil, err
 	}
 
 	if !token.Valid {
-		return nil, err
+		return nil, fmt.Errorf("invalid token")
 	}
 
 	return claims, nil

@@ -56,11 +56,12 @@ document.getElementById("creationType").addEventListener("change", function () {
   const title = document.getElementById("title");
   if (selection === "newTuum") {
     research.style.display = "flex";
-
     description.style.gridRow = 4;
     title.style.gridRow = 3;
   } else if (selection === "newRoom") {
     research.style.display = "none";
+    title.style.gridRowStart = 2;
+    title.style.gridRowEnd = 4;
     title.style.gridRowStart = 2;
     title.style.gridRowEnd = 4;
     console.log("newSalon");

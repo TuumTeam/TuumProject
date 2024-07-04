@@ -10,4 +10,16 @@ require (
 	golang.org/x/oauth2 v0.21.0
 )
 
-require cloud.google.com/go/compute/metadata v0.3.0 // indirect
+require filippo.io/edwards25519 v1.1.0 // indirect
+
+require (
+	cloud.google.com/go/compute/metadata v0.3.0 // indirect
+	github.com/go-sql-driver/mysql v1.8.1
+)
+
+require github.com/gorilla/securecookie v1.1.2 // indirect
+
+require (
+	github.com/gorilla/csrf v1.7.2
+	golang.org/x/time v0.5.0
+)

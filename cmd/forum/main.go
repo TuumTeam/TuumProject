@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-
 	"github.com/gorilla/mux"
+	"log"
+	"net/http"
+	"tuum.com/internal/config"
 	"tuum.com/internal/handlers"
 	"tuum.com/pkg/middleware"
 )
@@ -12,16 +12,25 @@ import (
 func main() {
 	r := mux.NewRouter()
 
+	// Serve static files
 	fs := http.FileServer(http.Dir("./web/static"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
+	r.HandleFunc("/search", handlers.SearchHandler).Methods("GET")
+
+	// Define routes
 	r.HandleFunc("/login", handlers.RedirectToLogin)
 	r.HandleFunc("/", handlers.RedirectToIndex)
+
+	// Subrouter for authenticated routes
 	s := r.PathPrefix("/").Subrouter()
 	s.Use(middleware.AuthMiddleware)
+	//s.Use(middleware.RateLimiter) // Add the rate limiter middleware
 	s.HandleFunc("/logout", handlers.Logout)
 	s.HandleFunc("/tuums", handlers.RedirectToTuums)
 	s.HandleFunc("/profile", handlers.RedirectToProfile)
 	s.HandleFunc("/create", handlers.RedirectToCreate)
+
+	// OAuth routes
 	r.HandleFunc("/auth/google/login", handlers.OAuthLogin)
 	r.HandleFunc("/auth/github/login", handlers.OAuthLogin)
 	r.HandleFunc("/auth/facebook/login", handlers.OAuthLogin)
@@ -29,9 +38,18 @@ func main() {
 	r.HandleFunc("/auth/github/callback", handlers.OAuthCallback)
 	r.HandleFunc("/auth/facebook/callback", handlers.OAuthCallback)
 
-	fmt.Println("Server starting at http://localhost:8080...")
-	err := http.ListenAndServe(":8080", r)
+	// Create a custom server with the TLS configuration
+	tlsConfig := config.SetupTLSConfig()
+	server := &http.Server{
+		Addr:      ":443",
+		Handler:   r, // Only use the main router as the handler
+		TLSConfig: tlsConfig,
+	}
+
+	// Start the server
+	log.Println("Server started at https://localhost")
+	err := server.ListenAndServeTLS("key/localhost.crt", "key/localhost.key")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal("Server startup error: ", err)
 	}
 }
