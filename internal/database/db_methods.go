@@ -198,3 +198,28 @@ func GetComments() []Comment {
 	}
 	return comments
 }
+
+func CheckUserExists(username, email string) bool {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	row := db.QueryRow("SELECT username, email FROM users WHERE username = ? OR email = ?", username, email)
+	var user User
+	err := row.Scan(&user.Username, &user.Email)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	return true
+}
+
+func CheckRoomExists(name string) bool {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	row := db.QueryRow("SELECT name FROM rooms WHERE name = ?", name)
+	var room Room
+	err := row.Scan(&room.Name)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	return true
+
+}
