@@ -20,7 +20,6 @@
       href="static/stylesheets/index.css"
     />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
   </head>
   <body>
     <div id="windowWrapper">
@@ -97,24 +96,14 @@
               </header>
               <section class="rooms-wrapper">
                 <div class="rooms">
+                  {{range .Rooms}}
                   <div class="room">
                     <div class="room-header">
-                      <h3 class="room-title">Room Title</h3>
-                      <p class="room-description">Room Description</p>
+                      <h3 class="room-title">{{.Name}}</h3>
+                      <p class="room-description">{{.Description}}</p>
                     </div>
                   </div>
-                  <div class="room">
-                    <div class="room-header">
-                      <h3 class="room-title">Room Title</h3>
-                      <p class="room-description">Room Description</p>
-                    </div>
-                  </div>
-                  <div class="room">
-                    <div class="room-header">
-                      <h3 class="room-title">Room Title</h3>
-                      <p class="room-description">Room Description</p>
-                    </div>
-                  </div>
+                  {{end}}
                 </div>
               </section>
             </div>
@@ -144,6 +133,7 @@
           <!-- wrapper2 -->
           <div id="researchBar" class="formSearchBarWrapper">
             <input
+              required
               type="search"
               id="formSearchBar"
               placeholder="Attach to a Rooms here"
@@ -151,9 +141,8 @@
               list="searchBarProposition"
             />
           </div>
-            <datalist id="searchBarProposition">
-            </datalist>
-          
+          <datalist id="searchBarProposition"> </datalist>
+
           <!-- wrapper3 -->
           <div id="title" class="titleTumm-wrapper">
             <div>
