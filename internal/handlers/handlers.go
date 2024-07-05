@@ -69,7 +69,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 		ExecTmpl(w, "web/templates/register.html", nil)
 	} else {
 		if r.FormValue("LogType") == "Login" {
-			logBool := database.Login(r.FormValue("email"), r.FormValue("hash"))
+			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("hash"))
 			if logBool {
 				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
 				if err != nil {
@@ -84,7 +84,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 					Path:     "/",                            // Set cookie for entire website
 					Expires:  time.Now().Add(24 * time.Hour), // Set expiration time
 					HttpOnly: true,                           // Make cookie inaccessible to JavaScript
-					Secure:   false,                          // Set to true if serving over HTTPS
+					Secure:   true,                           // Set to true if serving over HTTPS
 				})
 				http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 			} else {
@@ -105,7 +105,7 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 				Path:     "/",                            // Set cookie for entire website
 				Expires:  time.Now().Add(24 * time.Hour), // Set expiration time
 				HttpOnly: true,                           // Make cookie inaccessible to JavaScript
-				Secure:   false,                          // Set to true if serving over HTTPS
+				Secure:   true,                           // Set to true if serving over HTTPS
 			})
 
 			http.Redirect(w, r, "/tuums", http.StatusSeeOther)
@@ -166,7 +166,7 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println("finished")
 	}
-	ExecTmpl(w, "web/templates/tuum.html", nil)
+	ExecTmpl(w, "web/templates/tuums.html", nil)
 }
 
 func RedirectToCreate(w http.ResponseWriter, r *http.Request) {
@@ -180,5 +180,5 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		Value:   "",
 		Expires: time.Now(),
 	})
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 }
