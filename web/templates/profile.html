@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Profile</title>
-    <link rel="stylesheet" href="/static/stylesheets/profile.css">
-</head>
-<body>
-<div class="profile">
-  <div class="profile-info">
-    <h2>Profile Informations</h2>
-    <p>Username: <span id="username">{{.Username}}</span></p>
-    <p>Email: <span id="email">{{.Email}}</span></p>
-  </div>
-  <div class="profile-actions">
-    <h2>Actions</h2>
-    <button id="edit-profile">Edit Profile</button>
-    <button id="delete-profile">Delete Profile</button>
-  </div>
-</div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tab Navigation Example</title>
+    <link rel="stylesheet" href="static/stylesheets/profile.css" />
+  </head>
+  <body>
+    <div class="tabs">
+      <button class="tab" data-target="page1">Page 1</button>
+      <button class="tab" data-target="page2">Page 2</button>
+      <button class="tab" data-target="page3">Page 3</button>
+    </div>
+    <div class="pages">
+      <div id="page1" class="page">Content for Page 1</div>
+      <div id="page2" class="page">Content for Page 2</div>
+      <div id="page3" class="page">Content for Page 3</div>
+    </div>
+    <script src="static/js/profile.js"></script>
+  </body>
 </html>

@@ -182,7 +182,8 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println("finished")
 	}
-	ExecTmpl(w, "web/templates/tuums.html", nil)
+	dataBase := database.GetDatabaseForTuum()
+	ExecTmpl(w, "web/templates/tuums.html", dataBase)
 }
 
 func RedirectToCreate(w http.ResponseWriter, r *http.Request) {

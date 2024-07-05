@@ -223,3 +223,36 @@ func CheckRoomExists(name string) bool {
 	return true
 
 }
+type DatabaseContent struct {
+	Rooms []Room
+	// Posts    []Post
+	// Comments []Comment
+}
+
+func GetDatabaseForTuum() DatabaseContent {
+	rooms := GetRooms()
+	if rooms == nil {
+		fmt.Println("rooms error")
+		return DatabaseContent{}
+	}
+
+	// posts := GetPosts()
+	// if posts == nil {
+	// 	fmt.Println("posts error")
+	// 	return DatabaseContent{}
+	// }
+
+	// comments := GetComments()
+	// if comments == nil {
+	// 	fmt.Println("comments error")
+	// 	return DatabaseContent{}
+	// }
+	fmt.Println("Database content fetched successfully")
+
+	return DatabaseContent{
+		Rooms: rooms,
+		// Posts:    posts,
+		// Comments: comments,
+	}
+
+}
