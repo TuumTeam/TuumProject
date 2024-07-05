@@ -91,24 +91,31 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Login failed", http.StatusUnauthorized)
 			}
 		} else {
-			database.CreateUser(r.FormValue("username"), r.FormValue("email"), r.FormValue("hash"))
-			token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
-			if err != nil {
-				http.Error(w, "Failed to generate token", http.StatusInternalServerError)
-				return
+			if database.CheckUserExists(r.FormValue("username"), r.FormValue("email")) {
+				//w.Write([]byte("<script>document.getElementById('error_message').innerText = 'Name or Email already exists';</script>"))
+				w.Write([]byte("<script>alert('Name or Email already exists');</script>"))
+				ExecTmpl(w, "web/templates/register.html", nil)
+			} else {
+
+				database.CreateUser(r.FormValue("username"), r.FormValue("email"), r.FormValue("hash"))
+				token, err := auth.GenerateJWT(r.FormValue("username"), r.FormValue("email"))
+				if err != nil {
+					http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+					return
+				}
+
+				// Set JWT as cookie
+				http.SetCookie(w, &http.Cookie{
+					Name:     "session_token",                // Cookie name
+					Value:    token,                          // JWT token as the value
+					Path:     "/",                            // Set cookie for entire website
+					Expires:  time.Now().Add(24 * time.Hour), // Set expiration time
+					HttpOnly: true,                           // Make cookie inaccessible to JavaScript
+					Secure:   true,                           // Set to true if serving over HTTPS
+				})
+
+				http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 			}
-
-			// Set JWT as cookie
-			http.SetCookie(w, &http.Cookie{
-				Name:     "session_token",                // Cookie name
-				Value:    token,                          // JWT token as the value
-				Path:     "/",                            // Set cookie for entire website
-				Expires:  time.Now().Add(24 * time.Hour), // Set expiration time
-				HttpOnly: true,                           // Make cookie inaccessible to JavaScript
-				Secure:   true,                           // Set to true if serving over HTTPS
-			})
-
-			http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 		}
 	}
 }
@@ -145,24 +152,31 @@ func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
 func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		if r.FormValue("creationSelector") == "newRoom" {
-			database.CreateRoom(r.FormValue("title"), r.FormValue("description"))
+			if database.CheckRoomExists(r.FormValue("title")) {
+				w.Write([]byte("<script>alert('the Room already exists');</script>"))
+			} else {
+				database.CreateRoom(r.FormValue("title"), r.FormValue("description"))
+			}
 		} else if r.FormValue("creationSelector") == "newTuum" {
-			/*token := r.Header.Get("Authorization")
+			token := r.Header.Get("Authorization")
 			claims, err := auth.ValidateJWT(token)
 			if err != nil {
-				fmt.Println(err)
+				// Log l'erreur et envoie une réponse d'erreur
+				log.Printf("Erreur de validation JWT : %v", err)
+				http.Error(w, "Non autorisé", http.StatusUnauthorized)
+				return
 			}
 			userEmail := claims.Email
 			User, err := database.GetUserByEmail(userEmail)
 			if err != nil {
 				fmt.Println(err)
 			}
-			idUser := User.ID*/
+			idUser := User.ID
 			nameRoom := r.FormValue("searchRoom")
 			fmt.Println("name:", nameRoom)
 			idRoom := database.GetRoomIdByName(nameRoom)
 			fmt.Println(idRoom)
-			database.CreatePost(1, idRoom, r.FormValue("title"), r.FormValue("description"))
+			database.CreatePost(idUser, idRoom, r.FormValue("title"), r.FormValue("description"))
 		} else {
 			fmt.Println("rien")
 		}
