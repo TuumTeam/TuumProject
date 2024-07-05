@@ -70,11 +70,3 @@ func ValidateJWT(tokenString string) (*Claims, error) {
 
 	return claims, nil
 }
-
-func GetUserEmailFromToken(tokenString string) (string, error) {
-	claims, err := ValidateJWT(tokenString)
-	if err != nil {
-		return "", err
-	}
-	return claims.Email, nil
-}
