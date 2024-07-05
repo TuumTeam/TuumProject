@@ -147,7 +147,7 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 		if r.FormValue("creationSelector") == "newRoom" {
 			database.CreateRoom(r.FormValue("title"), r.FormValue("description"))
 		} else if r.FormValue("creationSelector") == "newTuum" {
-			token := r.Header.Get("Authorization")
+			/*token := r.Header.Get("Authorization")
 			claims, err := auth.ValidateJWT(token)
 			if err != nil {
 				fmt.Println(err)
@@ -157,10 +157,12 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println(err)
 			}
-			idUser := User.ID
+			idUser := User.ID*/
 			nameRoom := r.FormValue("searchRoom")
+			fmt.Println("name:", nameRoom)
 			idRoom := database.GetRoomIdByName(nameRoom)
-			database.CreatePost(idUser, idRoom, r.FormValue("title"), r.FormValue("description"))
+			fmt.Println(idRoom)
+			database.CreatePost(1, idRoom, r.FormValue("title"), r.FormValue("description"))
 		} else {
 			fmt.Println("rien")
 		}

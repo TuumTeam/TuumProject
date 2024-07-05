@@ -119,6 +119,7 @@ $(document).ready(function(){
           $("#searchBarProposition").empty();
       }
   });
+});
 document.addEventListener('DOMContentLoaded', () => {
     console.log('JavaScript chargé!');
 });
