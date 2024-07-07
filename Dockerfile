@@ -5,7 +5,7 @@ FROM golang:latest
 LABEL maintainer="Nicolas Nguyen Van Thanh <nvtnicolas@github.com>"
 
 # Set the Current Working Directory inside the container
-WORKDIR /app
+WORKDIR C:/Users/nicol/OneDrive/Documents/Code/TuumProject
 
 # Copy go mod and sum files
 COPY go.mod go.sum ./
@@ -17,9 +17,9 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN go build -o main .
+RUN go build -o main ./cmd/forum/main.go
 
-# Expose port 8080 to the outside world
+# Expose port 443 to the outside world
 EXPOSE 443
 
 # Command to run the executable
