@@ -17,11 +17,16 @@ import (
 	"tuum.com/internal/database"
 )
 
-func ExecTmpl(w http.ResponseWriter, tmpl string, data interface{}) {
-	err := template.Must(template.ParseFiles(tmpl)).Execute(w, data)
+func ExecTmpl(w http.ResponseWriter, tmplPath string, data interface{}) error {
+	tmpl, err := template.ParseFiles(tmplPath)
 	if err != nil {
-		fmt.Printf("Erreur d'execution du template\n")
+		return err // Retourne l'erreur si le fichier ne peut pas être parsé
 	}
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		return err // Retourne l'erreur si l'exécution échoue
+	}
+	return nil
 }
 
 func RedirectToIndex(w http.ResponseWriter, r *http.Request) {
@@ -118,6 +123,12 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+}
+
+func RedirectToAdmin(w http.ResponseWriter, r *http.Request) {
+	users := database.GetUsers()
+	ExecTmpl(w, "web/templates/admin.html", users)
+
 }
 
 func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
