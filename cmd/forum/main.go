@@ -30,6 +30,8 @@ func main() {
 	s.HandleFunc("/tuums", handlers.RedirectToTuums)
 	s.HandleFunc("/profile", handlers.RedirectToProfile)
 	s.HandleFunc("/create", handlers.RedirectToCreate)
+	s.HandleFunc("/deleteAccount", handlers.DeleteAccountHandler)
+	s.HandleFunc("/profile", handlers.ProfileHandler)
 
 	// Admin routes
 	s.HandleFunc("/admin", handlers.RedirectToAdmin)

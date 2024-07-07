@@ -3,17 +3,16 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"tuum.com/internal/models"
 )
 
 func init() {
-	db, err := sql.Open("sqlite3", "./database/forum.db")
+	var err error
+	db, err = sql.Open("sqlite3", "./database/forum.db")
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal("Failed to open database:", err)
 	}
-	defer db.Close()
-
 	createTables(db)
 }
 

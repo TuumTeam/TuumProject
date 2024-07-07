@@ -5,13 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"html/template"
 	"log"
 	"net/http"
 	"strings"
 	"time"
-
-	_ "github.com/go-sql-driver/mysql"
 
 	"tuum.com/internal/auth"
 	"tuum.com/internal/database"
@@ -209,4 +208,65 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		Expires: time.Now(),
 	})
 	http.Redirect(w, r, "/tuums", http.StatusSeeOther)
+}
+
+func DeleteAccountHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		email := r.FormValue("email")
+		if email == "" {
+			http.Error(w, "Email is required", http.StatusBadRequest)
+			return
+		}
+
+		// Call the function to delete the user account
+		err := database.DeleteAccountByEmail(email)
+		if err != nil {
+			http.Error(w, "Failed to delete account", http.StatusInternalServerError)
+			http.Redirect(w, r, "/profile", http.StatusSeeOther)
+			return
+		}
+
+		// Redirect to logout or confirmation page after deletion
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	} else {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+	}
+}
+
+func ProfileHandler(w http.ResponseWriter, r *http.Request) {
+	// Extract session token from cookies
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// Validate JWT and extract claims
+	claims, err := auth.ValidateJWT(cookie.Value)
+	if err != nil {
+		http.Error(w, "Failed to validate session", http.StatusInternalServerError)
+		return
+	}
+
+	// Fetch user details from the database
+	user, err := database.GetUserByEmail(claims.Email)
+	if err != nil {
+		log.Printf("Failed to fetch user details: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Execute the profile template with the user data
+	tmpl, err := template.ParseFiles("web/templates/profile.html")
+	if err != nil {
+		log.Printf("Failed to parse template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	err = tmpl.Execute(w, user)
+	if err != nil {
+		log.Printf("Failed to execute template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 }
