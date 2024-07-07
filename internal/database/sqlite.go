@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"tuum.com/internal/models"
@@ -23,6 +24,7 @@ func createTables(db *sql.DB) {
         username TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
+        status TEXT DEFAULT 'user' NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );`
 
@@ -84,18 +86,24 @@ func createTables(db *sql.DB) {
 	fmt.Println("Tables created successfully")
 }
 
-func Login(email string, password string) (bool, bool) {
+func Login(email string, password string) (bool, error) {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
 	query := `SELECT * FROM users WHERE email = ?`
 	row := db.QueryRow(query, email)
 	user := models.User{}
 	err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.CreatedAt)
 	if err != nil {
-		return false, false
+		if errors.Is(err, sql.ErrNoRows) {
+			// No user found with the provided email
+			return false, errors.New("no user found with the provided email")
+		}
+		// Other error
+		return false, err
 	}
 	if password == user.Password {
-		return true, false
+		return true, nil
 	} else {
-		return false, false
+		// Incorrect password
+		return false, errors.New("incorrect password")
 	}
 }

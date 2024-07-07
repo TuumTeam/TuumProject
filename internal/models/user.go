@@ -8,8 +8,9 @@ type User struct {
 	ID        int    `json:"id"`
 	Username  string `json:"username" validate:"required,min=3,max=32"`
 	Email     string `json:"email" validate:"required,email"`
-	Password  string `json:"-"`
+	Password  string `json:"-"` // Don't include the password in JSON responses
 	CreatedAt string `json:"created_at"`
+	Status    string `json:"status"` // Add this line if 'status' column is needed
 }
 
 func (u *User) HashPassword() error {
