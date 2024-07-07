@@ -5,7 +5,7 @@ FROM golang:latest
 LABEL maintainer="Nicolas Nguyen Van Thanh <nvtnicolas@github.com>"
 
 # Set the Current Working Directory inside the container
-WORKDIR C:/Users/nicol/OneDrive/Documents/Code/TuumProject
+WORKDIR /app
 
 # Copy go mod and sum files
 COPY go.mod go.sum ./

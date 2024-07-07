@@ -2,10 +2,8 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    image: tuumproject:latest
     ports:
       - "443:443"
-    volumes:
-      - .C:/Users/nicol/OneDrive/Documents/Code/TuumProject
     environment:
       - GIN_MODE=release
