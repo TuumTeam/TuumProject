@@ -2,7 +2,9 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -10,9 +12,19 @@ import (
 	_ "tuum.com/internal/models"
 )
 
+var db *sql.DB
+
+func init() {
+	var err error
+	db, err = sql.Open("sqlite3", "./database/forum.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 type User models.User
-type Post models.Post
 type Room models.Room
+type Post models.Post
 type Comment models.Comment
 
 func CreateUser(username, email, passwordHash string) {
@@ -223,6 +235,7 @@ func CheckRoomExists(name string) bool {
 	return true
 
 }
+
 type DatabaseContent struct {
 	Rooms []Room
 	// Posts    []Post
@@ -255,4 +268,31 @@ func GetDatabaseForTuum() DatabaseContent {
 		// Comments: comments,
 	}
 
+}
+
+func DeleteAccountByEmail(email string) error {
+	if db == nil {
+		return errors.New("database connection is not initialized")
+	}
+
+	query := `DELETE FROM users WHERE email = ?`
+	result, err := db.Exec(query, email)
+	if err != nil {
+		log.Printf("Error executing delete query for email %s: %v", email, err)
+		return fmt.Errorf("error executing delete query: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("Error fetching rows affected for email %s: %v", email, err)
+		return fmt.Errorf("error fetching rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		log.Printf("No user found with the given email: %s", email)
+		return errors.New("no user found with the given email")
+	}
+
+	log.Printf("Account deleted successfully for email: %s", email)
+	return nil
 }
