@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page d'administration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <link rel="stylesheet" href="/static/stylesheets/admin.css">
+</head>
+<body>
+    <div id="darkModeToggle">
+        <input type="checkbox" class="checkbox" id="checkbox" checked />
+        <label for="checkbox" class="checkbox-label">
+          <i class="fas fa-moon"></i>
+          <i class="fas fa-sun"></i>
+          <span class="ball"></span>
+        </label>
+    </div>
+    <form>
+        <label for="searchType">Select you search:</label>
+        <select id="searchType">
+            <option value="user">User</option>
+            <option value="post">Post</option>
+            <option value="room">Room</option>
+        </select>
+        <br><br>
+        <label for="searchTerm">Termes de recherche :</label>
+        <input type="text" id="searchTerm">
+        <br><br>
+        <button type="button" onclick="search()">Rechercher</button>
+    </form>
+    <div>
+       
+        {{ range . }}
+            <div class="searchResults">
+                {{ .username }}
+            </div>
+        {{ end }}
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/darkreader@latest/darkreader.min.js"></script>
+    <script>
+      window.onload = DarkReader.enable();
+      // Function to toggle dark mode
+      function toggleDarkMode(isDark) {
+        if (isDark) {
+          DarkReader.enable({
+            brightness: 100,
+            contrast: 90,
+            sepia: 10,
+          });
+        } else {
+          DarkReader.disable();
+        }
+      }
+
+      // Event listener for dark mode toggle button
+      document
+        .getElementById("darkModeToggle")
+        .addEventListener("change", () => {
+          const isDark = !document.body.classList.toggle("dark-mode");
+          toggleDarkMode(isDark);
+          localStorage.setItem("darkMode", isDark);
+        });
+
+      document
+        .querySelector(".userProfile")
+        .addEventListener("click", function () {
+          var menu = document.getElementById("profile-menu");
+          if (menu.classList.contains("hidden")) {
+            menu.classList.remove("hidden", "fadeOut");
+            menu.classList.add("fadeIn");
+            menu.style.display = "block"; // Ensure the menu is shown
+          } else {
+            menu.classList.remove("fadeIn");
+            menu.classList.add("fadeOut");
+            setTimeout(() => {
+              menu.classList.add("hidden");
+              menu.style.display = "none"; // Hide the menu after animation
+            }, 500); // Ensure this matches the animation duration
+          }
+        });
+    </script>
+</body>
+</html>
