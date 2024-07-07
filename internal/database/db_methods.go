@@ -72,7 +72,7 @@ func AddPost(post models.Post) error {
 }
 
 func GetUsers() []User {
-	db, _ := sql.Open("sqlite3", "./forum.db")
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
 	rows, err := db.Query("SELECT id, username, email, created_at FROM users")
 	if err != nil {
 		fmt.Println(err)
@@ -223,6 +223,7 @@ func CheckRoomExists(name string) bool {
 	return true
 
 }
+
 type DatabaseContent struct {
 	Rooms []Room
 	// Posts    []Post
