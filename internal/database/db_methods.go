@@ -15,15 +15,16 @@ type Post models.Post
 type Room models.Room
 type Comment models.Comment
 
-func CreateUser(username, email, passwordHash string) {
+func CreateUser(username, email, passwordHash string) error {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
 	query := `INSERT INTO users (username, email, password_hash, created_at) VALUES (?, ?, ?, ?)`
 	_, err := db.Exec(query, username, email, passwordHash, time.Now())
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
 	fmt.Println("User created successfully")
+	return nil
 }
 
 func CreateRoom(name, description string) {
@@ -223,6 +224,7 @@ func CheckRoomExists(name string) bool {
 	return true
 
 }
+
 type DatabaseContent struct {
 	Rooms []Room
 	// Posts    []Post
