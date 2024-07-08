@@ -96,11 +96,14 @@
               </header>
               <section class="rooms-wrapper">
                 <div class="rooms">
-                  {{range .Rooms}}
+                  {{range $index, $room := .Rooms}}
                   <div class="room">
                     <div class="room-header">
-                      <h3 class="room-title">{{.Name}}</h3>
-                      <p class="room-description">{{.Description}}</p>
+                      <h3 class="room-title">{{room.Name}}</h3>
+                      <p class="room-description">{{room.Description}}</p>
+                      <br />
+                      <div class="tuumTeaser">{{index $.Tuum.Title}}</div>
+                      <button class="roomRedirection">See more</button>
                     </div>
                   </div>
                   {{end}}
