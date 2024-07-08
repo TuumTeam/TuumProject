@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 
 	"tuum.com/internal/auth"
 	"tuum.com/internal/database"
@@ -72,6 +74,11 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		ExecTmpl(w, "web/templates/register.html", nil)
 	} else {
+		if "banned" == database.GetStatusByEmail(r.FormValue("email")) {
+			w.Write([]byte("<script>alert('User is banned');</script>"))
+			ExecTmpl(w, "web/templates/register.html", nil)
+			return
+		}
 		if r.FormValue("LogType") == "Login" {
 			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("hash"))
 			if logBool {
@@ -125,9 +132,104 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func RedirectToAdmin(w http.ResponseWriter, r *http.Request) {
-	users := database.GetUsers()
-	ExecTmpl(w, "web/templates/admin.html", users)
+	// Extract session token from cookies
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		// Handle error, redirect to login if no cookie
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
 
+	// Validate JWT
+	claims, err := auth.ValidateJWT(cookie.Value)
+	if err != nil {
+		// Handle error, invalid token
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// Get user details from the database
+	user, err := database.GetUserByEmail(claims.Email)
+	if err != nil {
+		// Handle error, user not found
+		http.Redirect(w, r, "/profile", http.StatusSeeOther)
+		return
+	}
+	fmt.Println(user.Status)
+	// Check if the user is authorized to access the admin page
+	if user.Status != "admin" {
+		// Redirect to profile or another appropriate page if not authorized
+		http.Redirect(w, r, "/profile", http.StatusForbidden)
+		return
+	}
+
+	if r.Method == http.MethodPost {
+		searchType := r.FormValue("searchType")
+		if searchType == "user" {
+			users := database.GetUsers()
+			ExecTmpl(w, "web/templates/admin.html", users)
+		} else if searchType == "room" {
+			rooms := database.GetRooms()
+			ExecTmpl(w, "web/templates/admin.html", rooms)
+		} else if searchType == "post" {
+			posts := database.GetPosts()
+			ExecTmpl(w, "web/templates/admin.html", posts)
+		} else {
+			ExecTmpl(w, "web/templates/admin.html", nil)
+		}
+	} else {
+		users := database.GetUsers()
+		ExecTmpl(w, "web/templates/admin.html", users)
+	}
+
+}
+func BanProfileHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		//searchType := r.FormValue("searchType")
+		//if searchType == "user" {
+		fmt.Println("user test")
+		if err := r.ParseForm(); err != nil {
+			fmt.Fprintf(w, "ParseForm() err: %v", err)
+			return
+		}
+		IdBanished := r.Form["IdBanished"]
+		fmt.Println("IdBanished:", IdBanished)
+		for _, id := range IdBanished {
+			idInt, err := strconv.Atoi(id)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			fmt.Println(idInt)
+			database.ChangeStatusUserByemail("banned", database.GetUser(idInt).Email)
+
+		}
+
+		http.Redirect(w, r, "/admin", http.StatusSeeOther)
+		w.Write([]byte("<script>alert('User banned');</script>"))
+		/*} else if searchType == "room" {
+			IdDelete := r.FormValue("IdDelete")
+			for i := 0; i < len(IdDelete); i++ {
+				id, err := strconv.Atoi(string(IdDelete[i]))
+				if err != nil {
+					fmt.Println(err)
+				}
+				database.DeleteRoom(id)
+			}
+		} else if searchType == "post" {
+			IdDelete := r.FormValue("IdDelete")
+			for i := 0; i < len(IdDelete); i++ {
+				id, err := strconv.Atoi(string(IdDelete[i]))
+				if err != nil {
+					fmt.Println(err)
+				}
+				database.DeletePost(id)
+			}
+		}*/
+		//http.Redirect(w, r, "/admin", http.StatusSeeOther)
+	} else {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+	}
 }
 
 func RedirectToProfile(w http.ResponseWriter, r *http.Request) {
