@@ -84,6 +84,51 @@ func AddPost(post models.Post) error {
 	return nil
 }
 
+func ChangeStatusUserByemail(status string, email string) error {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	query := `UPDATE users SET status = ? WHERE email = ?`
+	_, err := db.Exec(query, status, email)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Println("Status changed successfully")
+	return nil
+
+}
+
+func GetUsers() []User {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	rows, err := db.Query("SELECT id, username, email, status, created_at FROM users")
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	defer rows.Close()
+
+	var users []User
+	for rows.Next() {
+		var user User
+		if err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.Status, &user.CreatedAt); err != nil {
+			fmt.Println(err)
+			return nil
+		}
+		users = append(users, user)
+	}
+	return users
+}
+
+func GetUser(id int) User {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	row := db.QueryRow("SELECT id, username, email, created_at FROM users WHERE id = ?", id)
+	var user User
+	if err := row.Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt); err != nil {
+		fmt.Println(err)
+		return User{}
+	}
+	return user
+}
+
 func GetUserByEmail(email string) (User, error) {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
 	// Added status to the SELECT query
@@ -277,4 +322,26 @@ func DeleteAccountByEmail(email string) error {
 
 	log.Printf("Account deleted successfully for email: %s", email)
 	return nil
+}
+
+func DeleteRoom(Id int) {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	query := `DELETE FROM rooms WHERE id = ?`
+	_, err := db.Exec(query, Id)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("Room deleted successfully")
+}
+
+func DeletePost(Id int) {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	query := `DELETE FROM rooms WHERE id = ?`
+	_, err := db.Exec(query, Id)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("Room deleted successfully")
 }

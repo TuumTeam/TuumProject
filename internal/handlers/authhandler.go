@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"golang.org/x/oauth2"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"golang.org/x/oauth2"
 	"tuum.com/internal/auth"
 	"tuum.com/internal/database"
 )
@@ -108,6 +109,14 @@ func OAuthCallback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to get user", http.StatusInternalServerError)
 		return
 	}
+
+	status, _ := database.GetStatusByEmail(user["email"].(string))
+	if "banned" == status {
+		w.Write([]byte("<script>alert('User is banned');</script>"))
+		ExecTmpl(w, "web/templates/register.html", nil)
+		return
+	}
+
 	if dbUser.ID == 0 {
 		err := database.CreateUser(user["name"].(string), user["email"].(string), "")
 		if err != nil {

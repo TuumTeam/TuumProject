@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 	"tuum.com/internal/config"
 	"tuum.com/internal/handlers"
 	"tuum.com/pkg/middleware"
@@ -31,7 +32,9 @@ func main() {
 	s.HandleFunc("/create", handlers.RedirectToCreate)
 	s.HandleFunc("/deleteAccount", handlers.DeleteAccountHandler)
 	s.HandleFunc("/profile", handlers.ProfileHandler)
-	s.HandleFunc("/admin", handlers.AdminHandler)
+	r.HandleFunc("/ban", handlers.BanProfileHandler)
+	// Admin routes
+	s.HandleFunc("/admin", handlers.RedirectToAdmin)
 
 	// OAuth routes
 	r.HandleFunc("/auth/google/login", handlers.OAuthLogin)

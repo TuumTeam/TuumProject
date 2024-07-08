@@ -5,22 +5,29 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 
 	"tuum.com/internal/auth"
 	"tuum.com/internal/database"
 )
 
-func ExecTmpl(w http.ResponseWriter, tmpl string, data interface{}) {
-	err := template.Must(template.ParseFiles(tmpl)).Execute(w, data)
+func ExecTmpl(w http.ResponseWriter, tmplPath string, data interface{}) error {
+	tmpl, err := template.ParseFiles(tmplPath)
 	if err != nil {
-		fmt.Printf("Erreur d'execution du template\n")
+		return err // Retourne l'erreur si le fichier ne peut pas être parsé
 	}
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		return err // Retourne l'erreur si l'exécution échoue
+	}
+	return nil
 }
 
 func RedirectToIndex(w http.ResponseWriter, r *http.Request) {
@@ -67,6 +74,12 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		ExecTmpl(w, "web/templates/register.html", nil)
 	} else {
+		status, _ := database.GetStatusByEmail(r.FormValue("email"))
+		if "banned" == status {
+			w.Write([]byte("<script>alert('User is banned');</script>"))
+			ExecTmpl(w, "web/templates/register.html", nil)
+			return
+		}
 		if r.FormValue("LogType") == "Login" {
 			logBool, _ := database.Login(r.FormValue("email"), r.FormValue("hash"))
 			if logBool {
@@ -116,6 +129,102 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 			}
 		}
+	}
+}
+
+func RedirectToAdmin(w http.ResponseWriter, r *http.Request) {
+	// Step 1: Check Request Method
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Step 2: Authenticate User
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// Step 3: Authorize User
+	claims, err := auth.ValidateJWT(cookie.Value)
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	user, err := database.GetUserByEmail(claims.Email)
+	if err != nil || user.Status != "admin" {
+		http.Redirect(w, r, "/", http.StatusForbidden)
+		return
+	}
+
+	if r.Method == http.MethodPost {
+		searchType := r.FormValue("searchType")
+		if searchType == "user" {
+			users := database.GetUsers()
+			ExecTmpl(w, "web/templates/admin.html", users)
+		} else if searchType == "room" {
+			rooms := database.GetRooms()
+			ExecTmpl(w, "web/templates/admin.html", rooms)
+		} else if searchType == "post" {
+			posts := database.GetPosts()
+			ExecTmpl(w, "web/templates/admin.html", posts)
+		} else {
+			ExecTmpl(w, "web/templates/admin.html", nil)
+		}
+	} else {
+		users := database.GetUsers()
+		ExecTmpl(w, "web/templates/admin.html", users)
+	}
+
+}
+func BanProfileHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		//searchType := r.FormValue("searchType")
+		//if searchType == "user" {
+		fmt.Println("user test")
+		if err := r.ParseForm(); err != nil {
+			fmt.Fprintf(w, "ParseForm() err: %v", err)
+			return
+		}
+		IdBanished := r.Form["IdBanished"]
+		fmt.Println("IdBanished:", IdBanished)
+		for _, id := range IdBanished {
+			idInt, err := strconv.Atoi(id)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			fmt.Println(idInt)
+			database.ChangeStatusUserByemail("banned", database.GetUser(idInt).Email)
+
+		}
+
+		http.Redirect(w, r, "/admin", http.StatusSeeOther)
+		w.Write([]byte("<script>alert('User banned');</script>"))
+		/*} else if searchType == "room" {
+			IdDelete := r.FormValue("IdDelete")
+			for i := 0; i < len(IdDelete); i++ {
+				id, err := strconv.Atoi(string(IdDelete[i]))
+				if err != nil {
+					fmt.Println(err)
+				}
+				database.DeleteRoom(id)
+			}
+		} else if searchType == "post" {
+			IdDelete := r.FormValue("IdDelete")
+			for i := 0; i < len(IdDelete); i++ {
+				id, err := strconv.Atoi(string(IdDelete[i]))
+				if err != nil {
+					fmt.Println(err)
+				}
+				database.DeletePost(id)
+			}
+		}*/
+		//http.Redirect(w, r, "/admin", http.StatusSeeOther)
+	} else {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
 }
 
@@ -258,78 +367,4 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Failed to execute template: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
-}
-func RedirectToAdmin(w http.ResponseWriter, r *http.Request) {
-	// Ensure this handler only responds to POST requests
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	// Extract session token from cookies
-	cookie, err := r.Cookie("session_token")
-	if err != nil {
-		// Handle error, redirect to login if no cookie
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-
-	// Validate JWT
-	claims, err := auth.ValidateJWT(cookie.Value)
-	if err != nil {
-		// Handle error, invalid token
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-
-	// Get user details from the database
-	user, err := database.GetUserByEmail(claims.Email)
-	if err != nil {
-		// Handle error, user not found
-		http.Redirect(w, r, "/profile", http.StatusSeeOther)
-		return
-	}
-
-	// Check if the user is authorized to access the admin page
-	if user.Status != "admin" {
-		// Redirect to profile or another appropriate page if not authorized
-		http.Redirect(w, r, "/profile", http.StatusForbidden)
-		return
-	}
-
-	// Execute the admin template with the user data
-	ExecTmpl(w, "web/templates/admin.html", user)
-}
-func AdminHandler(w http.ResponseWriter, r *http.Request) {
-	// Step 1: Check Request Method
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	// Step 2: Authenticate User
-	cookie, err := r.Cookie("session_token")
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-
-	// Step 3: Authorize User
-	claims, err := auth.ValidateJWT(cookie.Value)
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-
-	user, err := database.GetUserByEmail(claims.Email)
-	if err != nil || user.Status != "admin" {
-		http.Redirect(w, r, "/", http.StatusForbidden)
-		return
-	}
-
-	// Step 4: Fetch Data (if needed)
-	// Example: data := fetchDataForAdmin()
-
-	// Step 5: Render Template
-	ExecTmpl(w, "web/templates/admin.html", user)
 }
