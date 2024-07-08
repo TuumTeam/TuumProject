@@ -32,7 +32,7 @@ func main() {
 	s.HandleFunc("/create", handlers.RedirectToCreate)
 	s.HandleFunc("/deleteAccount", handlers.DeleteAccountHandler)
 	s.HandleFunc("/profile", handlers.ProfileHandler)
-
+	r.HandleFunc("/ban", handlers.BanProfileHandler)
 	// Admin routes
 	s.HandleFunc("/admin", handlers.RedirectToAdmin)
 
