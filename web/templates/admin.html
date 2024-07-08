@@ -1,133 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Tuum</title>
+    <title>Page d'administration</title>
     <link rel="icon" href="/static/img/TuumLogo.png" type="image/png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="stylesheet" href="/static/stylesheets/profile.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="/static/js/sound.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <link rel="stylesheet" href="/static/stylesheets/admin.css">
 </head>
 <body>
-<div class="containerGrid">
-    <header class="topBar">
-        <i id="toggle-menu" class="fa-solid fa-bars svg-dimentions left-menu"></i>
-        <h1 class="lato-black" id="TuumsPage">Tuums</h1>
-        <section>
-            <div class="researchWrapper">
-                <input placeholder="Search Here" class="searchBar" type="search" />
-            </div>
-            <div id="newTuum">
-                <i class="fa-regular fa-square-plus svg"></i>
-            </div>
-        </section>
-        <div id="darkModeToggle">
-            <input type="checkbox" class="checkbox" id="checkbox" checked />
-            <label for="checkbox" class="checkbox-label">
-                <i class="fas fa-moon"></i>
-                <i class="fas fa-sun"></i>
-                <span class="ball"></span>
-            </label>
-        </div>
-        <div class="userProfile"></div>
-        <div id="profile-menu" class="lato-regular hidden">
-            <div class="menu-item">
-                <i class="fa-regular fa-user userMenuSvg"></i>
-                <a href="/profile">Profile</a>
-            </div>
-
-            <div class="menu-item">
-                <i class="fa-solid fa-arrow-right-from-bracket userMenuSvg"></i>
-                <a href="/logout">Logout</a>
-            </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <div id="profile-info" class="grid-item">
-            <h2>My Information</h2>
-            <p>Username: <span id="username">{{.Username}}</span></p>
-            <p>Email: <span id="email">{{.Email}}</span></p>
-            <p>Status: <span id="status">{{.Status}}</span></p>
-        </div>
+    <div id="darkModeToggle">
+        <input type="checkbox" class="checkbox" id="checkbox" checked />
+        <label for="checkbox" class="checkbox-label">
+          <i class="fas fa-moon"></i>
+          <i class="fas fa-sun"></i>
+          <span class="ball"></span>
+        </label>
     </div>
-    <!-- Button To open Admin Page -->
-    <div class="container">
-        <div id="admin-page" class="grid-item">
-            <a href="/admin">Admin Page</a>
-        </div>
-    </div>
-
-        <!-- Sound control section -->
-        <div class="sound-controls">
-            <label>
-                <input type="checkbox" id="soundToggle" checked />
-                Enable Click Sound
-            </label>
-            <br>
-            <label>
-                Volume:
-                <input type="range" id="soundVolume" min="0" max="1" step="0.01" value="1" />
-            </label>
-        </div>
-
-
-        <!-- Add form for deleting account -->
-        <form id="deleteAccountForm" action="/deleteAccount" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-            <input type="hidden" name="email" value="{{.Email}}">
-            <button type="submit">Delete Account</button>
+    <form method="post" action="/admin">
+        <label for="searchType">Select you search:</label>
+        <select id="searchType">
+            <option value="user" selected>User</option>
+            <option value="post">Post</option>
+            <option value="room">Room</option>
+        </select>
+        <br><br>
+        <label for="searchTerm">Termes de recherche :</label>
+        <input type="text" id="searchTerm">
+        <button type="button" onclick="search()" type="submit">Rechercher</button>
+    </form>
+    <div>
+        <form method="post" action="/ban">
+            <button type="submit">banished</button>
+            <table>
+              <tr>
+                  <th>banned True/false</th>
+                  <th>Username</th>
+                  <th>Status</th>
+              </tr>
+              {{ range . }}
+              <tr>
+                  <td>
+                      <input type="checkbox" id="{{ .ID }}" value="{{ .ID }}" name="IdBanished">
+                  </td>
+                  <td>
+                      <div class="searchResults">
+                          {{ .Username }}
+                      </div>
+                  </td>
+                  <td>
+                      <div>
+                          {{ .Status }}
+                      </div>
+                  </td>
+              </tr>
+              {{ end }}
+          </table>
         </form>
-
-
-
-        <footer>
-            <p>&copy; 2024 Profile Page. All rights reserved.</p>
-        </footer>
     </div>
 
-    <script src="/static/js/profile.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/darkreader@latest/darkreader.min.js"></script>
     <script>
-        window.onload = DarkReader.enable();
-
-        function toggleDarkMode(isDark) {
-            if (isDark) {
-                DarkReader.enable({
-                    brightness: 100,
-                    contrast: 90,
-                    sepia: 10,
-                });
-            } else {
-                DarkReader.disable();
-            }
+      window.onload = DarkReader.enable();
+      // Function to toggle dark mode
+      function toggleDarkMode(isDark) {
+        if (isDark) {
+          DarkReader.enable({
+            brightness: 100,
+            contrast: 90,
+            sepia: 10,
+          });
+        } else {
+          DarkReader.disable();
         }
+      }
 
-        document.getElementById("darkModeToggle").addEventListener("change", () => {
-            const isDark = !document.body.classList.toggle("dark-mode");
-            toggleDarkMode(isDark);
-            localStorage.setItem("darkMode", isDark);
+      // Event listener for dark mode toggle button
+      document
+        .getElementById("darkModeToggle")
+        .addEventListener("change", () => {
+          const isDark = !document.body.classList.toggle("dark-mode");
+          toggleDarkMode(isDark);
+          localStorage.setItem("darkMode", isDark);
         });
 
-        document.querySelector(".userProfile").addEventListener("click", function () {
-            var menu = document.getElementById("profile-menu");
-            if (menu.classList.contains("hidden")) {
-                menu.classList.remove("hidden", "fadeOut");
-                menu.classList.add("fadeIn");
-                menu.style.display = "block";
-            } else {
-                menu.classList.remove("fadeIn");
-                menu.classList.add("fadeOut");
-                setTimeout(() => {
-                    menu.classList.add("hidden");
-                    menu.style.display = "none";
-                }, 500);
-            }
+      document
+        .querySelector(".userProfile")
+        .addEventListener("click", function () {
+          var menu = document.getElementById("profile-menu");
+          if (menu.classList.contains("hidden")) {
+            menu.classList.remove("hidden", "fadeOut");
+            menu.classList.add("fadeIn");
+            menu.style.display = "block"; // Ensure the menu is shown
+          } else {
+            menu.classList.remove("fadeIn");
+            menu.classList.add("fadeOut");
+            setTimeout(() => {
+              menu.classList.add("hidden");
+              menu.style.display = "none"; // Hide the menu after animation
+            }, 500); // Ensure this matches the animation duration
+          }
         });
-
     </script>
 </body>
 </html>

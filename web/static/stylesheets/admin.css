@@ -1,0 +1,97 @@
+:root {
+    --blue: #78a5eccc;
+    --light-blue: #89abe3;
+    --egg-shell: #f5f7fc;
+    --white: #ffffff;
+  }
+
+  * {
+    letter-spacing: -0.5%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-sizing: border-box;
+  }
+  body{
+    padding: 40px;
+    text-align: center;
+  }
+
+  /* -------------------  Theme toggle ------------------- */
+
+  #darkModeToggle {
+    position: absolute;
+    right: 90px;
+    top: 30px;
+  }
+  
+  .checkbox {
+    opacity: 0;
+    position: absolute;
+  }
+  
+  .checkbox-label {
+    background-color: #111;
+    width: 50px;
+    height: 26px;
+    border-radius: 50px;
+    position: relative;
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .fa-moon {
+    color: #f1c40f;
+  }
+  
+  .fa-sun {
+    color: #f39c12;
+  }
+  
+  .ball {
+    background-color: var(--blue);
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    border-radius: 50%;
+    transition: transform 0.2s linear;
+  }
+  
+  .checkbox:checked + .checkbox-label .ball {
+    transform: translateX(24px);
+  }
+
+    /* -------------------  Theme toggle ------------------- */
+
+    table{
+        width: 100%;
+        border-collapse: collapse;
+        border: var(--white) 1px solid;
+    }
+    tr{
+        border: var(--white) 1px solid;
+    }
+    th, td{
+        padding: 10px;
+        border: var(--white) 1px solid;
+    }
+
+    input{
+        
+        margin: 10px 0;
+        border-radius: 5px;
+        background-color: var(--blue);
+    }
+
+
+    .searchResults{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        color: var(--light-blue);
+    }
