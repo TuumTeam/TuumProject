@@ -2,7 +2,9 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -10,14 +12,24 @@ import (
 	_ "tuum.com/internal/models"
 )
 
+var db *sql.DB
+
+func init() {
+	var err error
+	db, err = sql.Open("sqlite3", "./database/forum.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 type User models.User
-type Post models.Post
 type Room models.Room
+type Post models.Post
 type Comment models.Comment
 
 func CreateUser(username, email, passwordHash string) error {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
-	query := `INSERT INTO users (username, email, password_hash, created_at) VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO users (username, email, password_hash, status, created_at) VALUES (?, ?, ?, 'user', ?)`
 	_, err := db.Exec(query, username, email, passwordHash, time.Now())
 	if err != nil {
 		fmt.Println(err)
@@ -72,49 +84,30 @@ func AddPost(post models.Post) error {
 	return nil
 }
 
-func GetUsers() []User {
-	db, _ := sql.Open("sqlite3", "./forum.db")
-	rows, err := db.Query("SELECT id, username, email, created_at FROM users")
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
-	defer rows.Close()
-
-	var users []User
-	for rows.Next() {
-		var user User
-		if err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt); err != nil {
-			fmt.Println(err)
-			return nil
-		}
-		users = append(users, user)
-	}
-	return users
-}
-
-func GetUser(id int) User {
-	db, _ := sql.Open("sqlite3", "./database/forum.db")
-	row := db.QueryRow("SELECT id, username, email, created_at FROM users WHERE id = ?", id)
-	var user User
-	if err := row.Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt); err != nil {
-		fmt.Println(err)
-		return User{}
-	}
-	return user
-}
-
 func GetUserByEmail(email string) (User, error) {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
-	row := db.QueryRow("SELECT id, username, email, created_at FROM users WHERE email = ?", email)
+	// Added status to the SELECT query
+	row := db.QueryRow("SELECT id, username, email, status, created_at FROM users WHERE email = ?", email)
 	var user User
-	if err := row.Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt); err != nil {
+	// Added &user.Status to the row.Scan to capture the status from the query
+	if err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Status, &user.CreatedAt); err != nil {
 		fmt.Println(err)
 		return User{}, err
 	}
 	return user, nil
 }
 
+func GetStatusByEmail(email string) (string, error) {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	row := db.QueryRow("SELECT status FROM users WHERE email = ?", email)
+	var status string
+	if err := row.Scan(&status); err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+	return status, nil
+
+}
 func GetRooms() []Room {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
 	rows, err := db.Query("SELECT id, name, description, created_at FROM rooms")
@@ -257,4 +250,31 @@ func GetDatabaseForTuum() DatabaseContent {
 		// Comments: comments,
 	}
 
+}
+
+func DeleteAccountByEmail(email string) error {
+	if db == nil {
+		return errors.New("database connection is not initialized")
+	}
+
+	query := `DELETE FROM users WHERE email = ?`
+	result, err := db.Exec(query, email)
+	if err != nil {
+		log.Printf("Error executing delete query for email %s: %v", email, err)
+		return fmt.Errorf("error executing delete query: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("Error fetching rows affected for email %s: %v", email, err)
+		return fmt.Errorf("error fetching rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		log.Printf("No user found with the given email: %s", email)
+		return errors.New("no user found with the given email")
+	}
+
+	log.Printf("Account deleted successfully for email: %s", email)
+	return nil
 }

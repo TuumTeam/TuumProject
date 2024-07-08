@@ -29,6 +29,9 @@ func main() {
 	s.HandleFunc("/tuums", handlers.RedirectToTuums)
 	s.HandleFunc("/profile", handlers.RedirectToProfile)
 	s.HandleFunc("/create", handlers.RedirectToCreate)
+	s.HandleFunc("/deleteAccount", handlers.DeleteAccountHandler)
+	s.HandleFunc("/profile", handlers.ProfileHandler)
+	s.HandleFunc("/admin", handlers.AdminHandler)
 
 	// OAuth routes
 	r.HandleFunc("/auth/google/login", handlers.OAuthLogin)

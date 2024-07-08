@@ -1,53 +1,232 @@
 body {
   font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  color: #333;
+  overflow-x: hidden; /* Empêche le défilement horizontal */
 }
 
-.tabs {
-  display: flex;
-  border-bottom: 1px solid #ccc;
+header {
+  background-color: #0091B0;
+  color: white;
+  padding: 1em 0;
+  text-align: center;
 }
 
-.tab {
-  position: relative;
-  padding: 10px 20px;
-  border-radius: 8px 8px 0 0;
-  cursor: pointer;
-  border: none;
-  background: none;
-  outline: none;
-  transition: background-color 0.3s;
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+        "intro intro"
+        "features features-image"
+        "why-image why"
+        "how-to-start join"
+        "contact contact";
+  gap: 10px 0;
+  padding: 0;
+  width: 100vw; /* Utilisation de 100vw pour s'assurer que la largeur est bien prise en compte */
+  margin: 0; /* Suppression de tout espace possible autour du conteneur */
 }
 
-.tab:hover {
-  background-color: #f0f0f0;
-}
-.tab::after {
-  content: "";
-  background-color: orange;
-  position: absolute;
-  bottom: 0;
-  left: -5px;
-  width: 5px;
-  height: 20px;
-  transition: width 0.3s;
-}
-
-.page {
-  display: none;
+.grid-item {
+  background-color: white;
   padding: 20px;
+  height: 50vh; /* Chaque section prend toute la hauteur de la fenêtre */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.page.active {
-  display: block;
-  background-color: aqua;
-  animation: fadeIn 0.5s;
+#intro {
+  grid-area: intro;
+  text-align: center;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+#features {
+  grid-area: features;
+}
+
+#features-image {
+  grid-area: features-image;
+}
+
+#why {
+  grid-area: why;
+}
+
+#why-image {
+  grid-area: why-image;
+}
+
+#how-to-start {
+  grid-area: how-to-start;
+  text-align: left;
+}
+
+#join {
+  grid-area: join;
+  text-align: center;
+}
+
+#contact {
+  grid-area: contact;
+  text-align: center;
+}
+
+.contact-info, .social-media {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; /* Espacement entre les éléments */
+}
+
+.contact-info a, .social-media a {
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.contact-info a:hover, .social-media a:hover {
+  text-decoration: none;
+}
+
+.image {
+  background-color: white;
+  height: 50vh; /* Les images prennent également toute la hauteur de la fenêtre */
+}
+
+.image img {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+h1{
+  color: white;
+}
+h2 {
+  color: blue; /* Correction de la couleur pour correspondre au design initial */
+}
+
+ul, ol {
+  padding-left: 20px;
+}
+
+ul li, ol li {
+  margin-bottom: 10px;
+}
+
+a {
+  color: #0091B0;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #0091B0;
+  color: white;
+  text-align: center;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-top: 10px;
+}
+
+.btn:hover {
+  background-color: #0091B0;
+}
+
+footer {
+  text-align: center;
+  padding: 10px 0;
+  background-color: #0091B0;
+  color: white;
+  position: relative;
+  width: 100%;
+  bottom: 0;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+.fixed-btn {
+  position: fixed; /* Bouton fixe */
+  bottom: 20px; /* Distance du bas de la fenêtre */
+  left: 50%; /* Centré horizontalement */
+  transform: translateX(-50%); /* Pour vraiment centrer */
+  padding: 10px 20px;
+  background-color: #0091B0;
+  color: white;
+  text-align: center;
+  border-radius: 5px;
+  text-decoration: none;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+}
+
+.fixed-btn:hover {
+  background-color: #0091B0;
+  text-decoration: none;
+}
+
+----------------------------------------------------------------------
+
+#darkModeToggle {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox {
+  display: none;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  width: 50px;
+  height: 25px;
+  background-color: #111;
+  border-radius: 50px;
+  padding: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.checkbox-label .fas {
+  color: #fff;
+  font-size: 12px;
+}
+
+.checkbox-label .fa-moon {
+  position: absolute;
+  left: 5px;
+}
+
+.checkbox-label .fa-sun {
+  position: absolute;
+  right: 5px;
+}
+
+.checkbox-label .ball {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 21px;
+  height: 21px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.checkbox:checked + .checkbox-label .ball {
+  transform: translateX(25px);
 }

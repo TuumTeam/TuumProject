@@ -17,9 +17,9 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN go build -o main .
+RUN go build -o main ./cmd/forum/main.go
 
-# Expose port 8080 to the outside world
+# Expose port 443 to the outside world
 EXPOSE 443
 
 # Command to run the executable

@@ -5,13 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"html/template"
 	"log"
 	"net/http"
 	"strings"
 	"time"
-
-	_ "github.com/go-sql-driver/mysql"
 
 	"tuum.com/internal/auth"
 	"tuum.com/internal/database"
@@ -198,4 +197,139 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		Expires: time.Now(),
 	})
 	http.Redirect(w, r, "/tuums", http.StatusSeeOther)
+}
+
+func DeleteAccountHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		email := r.FormValue("email")
+		if email == "" {
+			http.Error(w, "Email is required", http.StatusBadRequest)
+			return
+		}
+
+		// Call the function to delete the user account
+		err := database.DeleteAccountByEmail(email)
+		if err != nil {
+			http.Error(w, "Failed to delete account", http.StatusInternalServerError)
+			http.Redirect(w, r, "/profile", http.StatusSeeOther)
+			return
+		}
+
+		// Redirect to logout or confirmation page after deletion
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	} else {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+	}
+}
+
+func ProfileHandler(w http.ResponseWriter, r *http.Request) {
+	// Extract session token from cookies
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// Validate JWT and extract claims
+	claims, err := auth.ValidateJWT(cookie.Value)
+	if err != nil {
+		http.Error(w, "Failed to validate session", http.StatusInternalServerError)
+		return
+	}
+
+	// Fetch user details from the database
+	user, err := database.GetUserByEmail(claims.Email)
+	if err != nil {
+		log.Printf("Failed to fetch user details: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Execute the profile template with the user data
+	tmpl, err := template.ParseFiles("web/templates/profile.html")
+	if err != nil {
+		log.Printf("Failed to parse template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	err = tmpl.Execute(w, user)
+	if err != nil {
+		log.Printf("Failed to execute template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+func RedirectToAdmin(w http.ResponseWriter, r *http.Request) {
+	// Ensure this handler only responds to POST requests
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Extract session token from cookies
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		// Handle error, redirect to login if no cookie
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// Validate JWT
+	claims, err := auth.ValidateJWT(cookie.Value)
+	if err != nil {
+		// Handle error, invalid token
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// Get user details from the database
+	user, err := database.GetUserByEmail(claims.Email)
+	if err != nil {
+		// Handle error, user not found
+		http.Redirect(w, r, "/profile", http.StatusSeeOther)
+		return
+	}
+
+	// Check if the user is authorized to access the admin page
+	if user.Status != "admin" {
+		// Redirect to profile or another appropriate page if not authorized
+		http.Redirect(w, r, "/profile", http.StatusForbidden)
+		return
+	}
+
+	// Execute the admin template with the user data
+	ExecTmpl(w, "web/templates/admin.html", user)
+}
+func AdminHandler(w http.ResponseWriter, r *http.Request) {
+	// Step 1: Check Request Method
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Step 2: Authenticate User
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// Step 3: Authorize User
+	claims, err := auth.ValidateJWT(cookie.Value)
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	user, err := database.GetUserByEmail(claims.Email)
+	if err != nil || user.Status != "admin" {
+		http.Redirect(w, r, "/", http.StatusForbidden)
+		return
+	}
+
+	// Step 4: Fetch Data (if needed)
+	// Example: data := fetchDataForAdmin()
+
+	// Step 5: Render Template
+	ExecTmpl(w, "web/templates/admin.html", user)
 }
