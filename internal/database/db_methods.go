@@ -130,15 +130,28 @@ func GetUser(id int) User {
 
 func GetUserByEmail(email string) (User, error) {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
-	row := db.QueryRow("SELECT id, username, email, created_at FROM users WHERE email = ?", email)
+	// Added status to the SELECT query
+	row := db.QueryRow("SELECT id, username, email, status, created_at FROM users WHERE email = ?", email)
 	var user User
-	if err := row.Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt); err != nil {
+	// Added &user.Status to the row.Scan to capture the status from the query
+	if err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Status, &user.CreatedAt); err != nil {
 		fmt.Println(err)
 		return User{}, err
 	}
 	return user, nil
 }
 
+func GetStatusByEmail(email string) (string, error) {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	row := db.QueryRow("SELECT status FROM users WHERE email = ?", email)
+	var status string
+	if err := row.Scan(&status); err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+	return status, nil
+
+}
 func GetRooms() []Room {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
 	rows, err := db.Query("SELECT id, name, description, created_at FROM rooms")
@@ -281,18 +294,6 @@ func GetDatabaseForTuum() DatabaseContent {
 		// Comments: comments,
 	}
 
-}
-
-func GetStatusByEmail(email string) string {
-	db, _ := sql.Open("sqlite3", "./database/forum.db")
-	row := db.QueryRow("SELECT status FROM users WHERE email = ?", email)
-	var user User
-	err := row.Scan(&user.Status)
-	if err != nil {
-		fmt.Println(err)
-		return user.Status
-	}
-	return user.Status
 }
 
 func DeleteAccountByEmail(email string) error {

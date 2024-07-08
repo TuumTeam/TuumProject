@@ -22,3 +22,15 @@ function deleteAccount() {
             });
     }
 }
+// Sound controls
+document.getElementById('soundToggle').addEventListener('change', function() {
+    toggleSound(this.checked);
+});
+
+document.getElementById('soundVolume').addEventListener('input', function() {
+    setVolume(this.value);
+});
+
+// Initialize sound controls based on local storage
+document.getElementById('soundToggle').checked = localStorage.getItem('clickSoundEnabled') !== 'false';
+document.getElementById('soundVolume').value = localStorage.getItem('clickSoundVolume') || 1.0;

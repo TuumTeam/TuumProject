@@ -372,3 +372,77 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
+func RedirectToAdmin(w http.ResponseWriter, r *http.Request) {
+	// Ensure this handler only responds to POST requests
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Extract session token from cookies
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		// Handle error, redirect to login if no cookie
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// Validate JWT
+	claims, err := auth.ValidateJWT(cookie.Value)
+	if err != nil {
+		// Handle error, invalid token
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// Get user details from the database
+	user, err := database.GetUserByEmail(claims.Email)
+	if err != nil {
+		// Handle error, user not found
+		http.Redirect(w, r, "/profile", http.StatusSeeOther)
+		return
+	}
+
+	// Check if the user is authorized to access the admin page
+	if user.Status != "admin" {
+		// Redirect to profile or another appropriate page if not authorized
+		http.Redirect(w, r, "/profile", http.StatusForbidden)
+		return
+	}
+
+	// Execute the admin template with the user data
+	ExecTmpl(w, "web/templates/admin.html", user)
+}
+func AdminHandler(w http.ResponseWriter, r *http.Request) {
+	// Step 1: Check Request Method
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Step 2: Authenticate User
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// Step 3: Authorize User
+	claims, err := auth.ValidateJWT(cookie.Value)
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	user, err := database.GetUserByEmail(claims.Email)
+	if err != nil || user.Status != "admin" {
+		http.Redirect(w, r, "/", http.StatusForbidden)
+		return
+	}
+
+	// Step 4: Fetch Data (if needed)
+	// Example: data := fetchDataForAdmin()
+
+	// Step 5: Render Template
+	ExecTmpl(w, "web/templates/admin.html", user)
+}

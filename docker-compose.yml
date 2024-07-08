@@ -2,10 +2,8 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    image: tuumproject:latest
     ports:
-      - "8080:8080"
-    volumes:
-      - .:/app
+      - "443:443"
     environment:
       - GIN_MODE=release
