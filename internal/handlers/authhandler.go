@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"golang.org/x/oauth2"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"golang.org/x/oauth2"
 	"tuum.com/internal/auth"
 	"tuum.com/internal/database"
 )
@@ -73,6 +74,12 @@ func OAuthCallback(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("User: %v\n", dbUser)
 
 	}
+	status, _ := database.GetStatusByEmail(user["email"].(string))
+	if "banned" == status {
+		w.Write([]byte("<script>alert('User is banned');</script>"))
+		ExecTmpl(w, "web/templates/register.html", nil)
+		return
+	}
 	err = nil
 	token, err := auth.GenerateJWT(dbUser.Username, dbUser.Email)
 	if err != nil {
@@ -88,5 +95,6 @@ func OAuthCallback(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,                           // Make cookie inaccessible to JavaScript
 		Secure:   true,                           // Set to true if serving over HTTPS
 	})
+
 	http.Redirect(w, r, "/tuums", http.StatusSeeOther)
 }
