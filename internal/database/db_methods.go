@@ -29,7 +29,7 @@ type Comment models.Comment
 
 func CreateUser(username, email, passwordHash string) {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
-	query := `INSERT INTO users (username, email, password_hash, created_at) VALUES (?, ?, ?, ?)`
+	query := `INSERT INTO users (username, email, password_hash, status, created_at) VALUES (?, ?, ?, 'user', ?)`
 	_, err := db.Exec(query, username, email, passwordHash, time.Now())
 	if err != nil {
 		fmt.Println(err)
@@ -83,9 +83,22 @@ func AddPost(post models.Post) error {
 	return nil
 }
 
+func ChangeStatusUserByemail(status string, email string) error {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	query := `UPDATE users SET status = ? WHERE email = ?`
+	_, err := db.Exec(query, status, email)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Println("Status changed successfully")
+	return nil
+
+}
+
 func GetUsers() []User {
 	db, _ := sql.Open("sqlite3", "./database/forum.db")
-	rows, err := db.Query("SELECT id, username, email, created_at FROM users")
+	rows, err := db.Query("SELECT id, username, email, status, created_at FROM users")
 	if err != nil {
 		fmt.Println(err)
 		return nil
@@ -95,7 +108,7 @@ func GetUsers() []User {
 	var users []User
 	for rows.Next() {
 		var user User
-		if err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt); err != nil {
+		if err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.Status, &user.CreatedAt); err != nil {
 			fmt.Println(err)
 			return nil
 		}
@@ -270,6 +283,18 @@ func GetDatabaseForTuum() DatabaseContent {
 
 }
 
+func GetStatusByEmail(email string) string {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	row := db.QueryRow("SELECT status FROM users WHERE email = ?", email)
+	var user User
+	err := row.Scan(&user.Status)
+	if err != nil {
+		fmt.Println(err)
+		return user.Status
+	}
+	return user.Status
+}
+
 func DeleteAccountByEmail(email string) error {
 	if db == nil {
 		return errors.New("database connection is not initialized")
@@ -295,4 +320,26 @@ func DeleteAccountByEmail(email string) error {
 
 	log.Printf("Account deleted successfully for email: %s", email)
 	return nil
+}
+
+func DeleteRoom(Id int) {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	query := `DELETE FROM rooms WHERE id = ?`
+	_, err := db.Exec(query, Id)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("Room deleted successfully")
+}
+
+func DeletePost(Id int) {
+	db, _ := sql.Open("sqlite3", "./database/forum.db")
+	query := `DELETE FROM rooms WHERE id = ?`
+	_, err := db.Exec(query, Id)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("Room deleted successfully")
 }
