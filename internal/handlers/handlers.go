@@ -281,14 +281,10 @@ func RedirectToTuums(w http.ResponseWriter, r *http.Request) {
 			}
 			idUser := User.ID
 			nameRoom := r.FormValue("searchRoom")
-			fmt.Println("name:", nameRoom)
 			idRoom := database.GetRoomIdByName(nameRoom)
 			fmt.Println(idRoom)
 			database.CreatePost(idUser, idRoom, r.FormValue("title"), r.FormValue("description"))
-		} else {
-			fmt.Println("rien")
 		}
-		fmt.Println("finished")
 	}
 	dataBase := database.GetDatabaseForTuum()
 	ExecTmpl(w, "web/templates/tuums.html", dataBase)
@@ -367,4 +363,8 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Failed to execute template: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
+}
+
+func RedirectTo404(w http.ResponseWriter, r *http.Request) {
+	ExecTmpl(w, "web/templates/404.html", nil)
 }

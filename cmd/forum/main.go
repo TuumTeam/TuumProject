@@ -21,6 +21,7 @@ func main() {
 	// Define routes
 	r.HandleFunc("/login", handlers.RedirectToLogin)
 	r.HandleFunc("/", handlers.RedirectToIndex)
+	r.NotFoundHandler = http.HandlerFunc(handlers.RedirectTo404)
 
 	// Subrouter for authenticated routes
 	s := r.PathPrefix("/").Subrouter()
