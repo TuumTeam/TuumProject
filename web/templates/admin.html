@@ -14,26 +14,46 @@
           <span class="ball"></span>
         </label>
     </div>
-    <form>
+    <form method="post" action="/admin">
         <label for="searchType">Select you search:</label>
         <select id="searchType">
-            <option value="user">User</option>
+            <option value="user" selected>User</option>
             <option value="post">Post</option>
             <option value="room">Room</option>
         </select>
         <br><br>
         <label for="searchTerm">Termes de recherche :</label>
         <input type="text" id="searchTerm">
-        <br><br>
-        <button type="button" onclick="search()">Rechercher</button>
+        <button type="button" onclick="search()" type="submit">Rechercher</button>
     </form>
     <div>
-       
-        {{ range . }}
-            <div class="searchResults">
-                {{ .username }}
-            </div>
-        {{ end }}
+        <form method="post" action="/ban">
+            <button type="submit">banished</button>
+            <table>
+              <tr>
+                  <th>banned True/false</th>
+                  <th>Username</th>
+                  <th>Status</th>
+              </tr>
+              {{ range . }}
+              <tr>
+                  <td>
+                      <input type="checkbox" id="{{ .ID }}" value="{{ .ID }}" name="IdBanished">
+                  </td>
+                  <td>
+                      <div class="searchResults">
+                          {{ .Username }}
+                      </div>
+                  </td>
+                  <td>
+                      <div>
+                          {{ .Status }}
+                      </div>
+                  </td>
+              </tr>
+              {{ end }}
+          </table>
+        </form>
     </div>
 
 

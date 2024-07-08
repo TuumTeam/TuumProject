@@ -68,6 +68,19 @@
 
     /* -------------------  Theme toggle ------------------- */
 
+    table{
+        width: 100%;
+        border-collapse: collapse;
+        border: var(--white) 1px solid;
+    }
+    tr{
+        border: var(--white) 1px solid;
+    }
+    th, td{
+        padding: 10px;
+        border: var(--white) 1px solid;
+    }
+
     input{
         
         margin: 10px 0;
